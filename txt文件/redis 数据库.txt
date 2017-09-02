@@ -1,0 +1,12 @@
+﻿redis 数据库
+
+1.bat文件 6379.bat
+@echo off
+redis-server.exe redis-6380.conf
+@pause
+
+2.配置文件 redis-6380.conf
+#bind 127.0.0.127
+bind 0.0.0.0
+port 6379
+#tcp-keepalive 300
