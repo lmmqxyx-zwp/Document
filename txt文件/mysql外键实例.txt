@@ -1,0 +1,15 @@
+
+--×Ö¶Î£ºfield
+create table t1(
+	id int primary key AUTO_INCREMENT,
+	f1 varchar(20) not null,
+	f2 varchar(20) not null
+	);
+
+create table t2(
+	id int primary key auto_increment,
+	f_t int not null,
+	f1 varchar(20) not null,
+	f2 varchar(20) not null,
+	foreign key (f_t) references t1(id)
+	);
