@@ -42,7 +42,7 @@ MariaDB [(none)]> show variables like 'character%';
 alter database 数据库名称 character set utf8;
 
 ---创建指定编码的数据库
-create database 数据库名称 character set utf8 ;
+create database 数据库名称 character set utf8;
 
 
 
