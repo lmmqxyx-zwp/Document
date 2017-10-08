@@ -1,11 +1,11 @@
-1¡¢É¾³ı±í¿Õ¼ä
-DROP TABLESPACE ±í¿Õ¼äµÄÃû×Ö INCLUDING CONTENTS AND DATAFILES;
+ï»¿1ã€åˆ é™¤è¡¨ç©ºé—´
+DROP TABLESPACE è¡¨ç©ºé—´çš„åå­— INCLUDING CONTENTS AND DATAFILES;
 
 ========================================================================
 
-2¡¢´´½¨±í¿Õ¼ä
+2ã€åˆ›å»ºè¡¨ç©ºé—´
 
-´´½¨ÁÙÊ±±í¿Õ¼ä
+åˆ›å»ºä¸´æ—¶è¡¨ç©ºé—´
 create temporary tablespace user_temp  
 tempfile 'F:\oracle\temp\user_temp.dbf' 
 size 50m  
@@ -13,7 +13,7 @@ autoextend on
 next 50m maxsize 20480m  
 extent management local;  
 
-´´½¨Êı¾İ±í¿Õ¼ä
+åˆ›å»ºæ•°æ®è¡¨ç©ºé—´
 create tablespace user_data  
 logging  
 datafile 'F:\oracle\data\user_data.dbf' 
@@ -23,9 +23,35 @@ next 50m maxsize 20480m
 extent management local;  
 ========================================================================
 
-3¡¢½âËøÓÃ»§
-alter user ÓÃ»§Ãû account unlock;
+3ã€è§£é”ç”¨æˆ·
+alter user ç”¨æˆ·å account unlock;
+========================================================================
+
+4ã€è¡¨ç©ºé—´æƒé™é—®é¢˜
+alter user ç”¨æˆ·å quota unlimited on  è¡¨ç©ºé—´åå­—;
+========================================================================
+
+5ã€ç”¨sqlplusè¿æ¥åˆ°è¿œç¨‹æ•°æ®åº“
+æ–¹æ³•ä¸€ã€
+sqlplus/nolog
+connect username/password@æœåŠ¡å™¨IP:ORACLEç«¯å£å·/æ•°æ®åº“æœåŠ¡å
+æ–¹æ³•äºŒã€
+sqlplus username/passwrod@æœåŠ¡å™¨IP:ORACLEç«¯å£å·/æ•°æ®åº“æœåŠ¡å
+========================================================================
 
 
-4¡¢±í¿Õ¼äÈ¨ÏŞÎÊÌâ
-alter user ÓÃ»§Ãû quota unlimited on  ±í¿Õ¼äÃû×Ö;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
