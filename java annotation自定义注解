@@ -1,0 +1,128 @@
+package com.by.annotation;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Documented
+@Target(ElementType.METHOD)
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+public @interface MethodInfo {
+	String author() default "zwp";
+	String date();
+	int revision() default 1;
+	String comments();
+}
+
+// 注解方法不能带有参数；
+// 注解方法返回值类型限定为：基本类型、String、Enums、Annotation或者是这些类型的数组；
+// 注解方法可以有默认值；
+// 注解本身能够包含元注解，元注解被用来注解其它注解。
+
+
+// 四中类型的元注解
+
+// @Documented —— 指明拥有这个注解的元素可以被javadoc此类的工具文档化。
+//这种类型应该用于注解那些影响客户使用带注释的元素声明的类型。如果一种声明使用Documented进行注解，
+//这种类型的注解被作为被标注的程序成员的公共API。
+
+// @Target——指明该类型的注解可以注解的程序元素的范围。
+//该元注解的取值可以为TYPE,METHOD,CONSTRUCTOR,FIELD等。
+//如果Target元注解没有出现，那么定义的注解可以应用于程序的任何元素。
+
+// @Inherited——指明该注解类型被自动继承。
+//如果用户在当前类中查询这个元注解类型并且当前类的声明中不包含这个元注解类型，
+//那么也将自动查询当前类的父类是否存在Inherited元注解，这个动作将被重复执行知道这个标注类型被找到，
+//或者是查询到顶层的父类。
+
+// @Retention——指明了该Annotation被保留的时间长短。
+//RetentionPolicy取值为SOURCE,CLASS,RUNTIME。
+
+// ------------------------------------------------------------------
+
+// java 内建注解
+
+// @Override——当我们想要复写父类中的方法时，我们需要使用该注解去告知编译器我们想要复写这个方法。
+//这样一来当父类中的方法移除或者发生更改时编译器将提示错误信息。
+
+// @Deprecated——当我们希望编译器知道某一方法不建议使用时，我们应该使用这个注解。
+//Java在javadoc 中推荐使用该注解，我们应该提供为什么该方法不推荐使用以及替代的方法。
+
+// @SuppressWarnings——这个仅仅是告诉编译器忽略特定的警告信息，例如在泛型中使用原生数据类型。
+//它的保留策略是SOURCE（译者注：在源文件中有效）并且被编译器丢弃。
+
+例子：
+package com.by.annotation;
+
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class AnnotationExample {
+
+	public static void main(String[] args) {
+	}
+
+	@Override
+	@MethodInfo(author = "zwp", comments = "Main method", date = "Nov 17 2012", revision = 1)
+	public String toString() {
+	    return "Overriden toString method";
+	}
+	
+	@Deprecated
+	@MethodInfo(comments = "deprecated method", date = "Nov 17 2012")
+	public static void oldMethod() {
+	    System.out.println("old method, don’t use it.");
+	}
+	
+		@SuppressWarnings({"unchecked","deprecation"
+	
+		})@MethodInfo(author="zwp",comments="Main method",date="Nov 17 2012",revision=10)
+	
+	public static void genericsTest() throws FileNotFoundException {
+	    List l = new ArrayList();
+	    l.add("abc");
+	    oldMethod();
+	}
+}
+
+Java注解解析
+package com.by.annotation;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+
+public class AnnotationParsing {
+
+	public static void main(String[] args) {
+		try {
+			// 获取类的所有方法
+			for (Method method : AnnotationParsing.class.getClassLoader().loadClass(("com.by.annotation.AnnotationExample")).getMethods()) {
+				// checks if MethodInfo annotation is present for the method
+				if (method.isAnnotationPresent(com.by.annotation.MethodInfo.class)) {
+					try {
+						// iterates all the annotations available in the method
+						for (Annotation anno : method.getDeclaredAnnotations()) {
+							System.out.println("Annotation in Method " + method + " : " + anno);
+						}
+						MethodInfo methodAnno = method.getAnnotation(MethodInfo.class);
+						if (methodAnno.revision() == 1) {
+							System.out.println("Method with revision no 1 = " + method);
+						}
+
+					} catch (Throwable ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+		} catch (SecurityException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+}
+
