@@ -1,0 +1,81 @@
+public class A {
+	
+	public static void main(String[] args) {
+		
+		C c = new C();
+		c.setName("c");
+		
+		E e = new E();
+		
+		A a = new A();
+		
+		System.out.println("---c---");
+		B<C> bc = new B<C>();
+		bc.initT(c);
+		c = bc.getT();
+		
+		System.out.println("c" + c);
+		
+		// a.test(bc);
+		System.out.println("---e---");
+		B<E> be = new B<E>();
+		be.initT(e);
+		e = be.getT();
+		
+		System.out.println("e" + e);
+		
+		a.test(be);
+		
+		
+	}
+	
+	
+	public void test(B<? extends D> b) { // 意义：就是说传入的参数b中的泛型必须是集成类D
+		System.out.println("? 应该被成功替换");
+		System.out.println(b.getClass());
+	}
+}
+
+class B<T> {
+	private T t;
+	
+	public T getT() {
+		System.out.println(this.t.getClass());
+		return t;
+	}
+	
+	public void initT(T t) {
+		this.t = t;
+	}
+}
+
+class C {
+	private String name;
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+}
+
+class D {
+	private int id;
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	public int getId() {
+		return id;
+	}
+}
+
+class E extends D {
+	public E() {
+		this.setId(10);
+		System.out.println(this.getId());
+	}
+}
