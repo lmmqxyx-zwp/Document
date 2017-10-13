@@ -1,0 +1,204 @@
+
+一、作为普通的常量使用，如星期、季节、颜色、城市等等;通常配合switch语句使用。 
+
+定义：
+//周一到周天枚举
+public enum WeekEnum {
+    MON,TUES,WED,THURS,FRI,SAT,SUN;
+}
+使用：
+//jdk1.7开始switch语句开始支持String类型，而jdk1.6之前只支持int,char,enum类型，使用枚举的话，能使代码的可读性大大增强
+public class TestEnum {
+    public static void main(String[] args) {
+        WeekEnum week = WeekEnum.TUES;
+        switch (week) {
+            case MON:
+                System.out.println("星期一");
+                break;
+            case TUES:
+                System.out.println("星期二");
+                break;
+            case WED:
+                System.out.println("星期三");
+                break;
+            case THURS:
+                System.out.println("星期四");
+                break;
+            case FRI:
+                System.out.println("星期五");
+                break;
+            case SAT:
+                System.out.println("星期六");
+                break;
+            case SUN:
+                System.out.println("星期天");
+                break;
+        }
+    }
+}
+
+------------------------------------------------------------------------------------------------------------------------------------
+二、往枚举中添加变量、构造函数、以达到灵活获取指定值的目的（注： Java 要求必须先定义 enum 实例，否则编译会报错）
+通常用于一些业务系统中定义一些固定值，如用于匹配db中的字段值等。
+
+定义：
+//利用构造函数将变量赋值，然后通过get方法获取指定值
+　public enum CompanyEnum {
+    SF("顺丰速运", 1001), YTO("圆通速递", 1002),STO("申通物流",1003),YD("韵达快运",1004),YZPY("中国邮政",1005);
+    private CompanyEnum(String company, int code) {
+        this.company = company;
+        this.code = code;
+    }
+    private String company; // 公司名称
+    private int code; // 公司编码
+    public String getCompany() {
+        return company;
+    }
+    public void setCompany(String company) {
+        this.company = company;
+    }
+    public int getCode() {
+        return code;
+    }
+    public void setCode(int code) {
+        this.code = code;
+    }
+}
+
+使用：
+//输出->1001 、 顺丰速运
+public class TestEnum {
+    public static void main(String[] args) {
+        System.out.println(CompanyEnum.SF.getCode());
+        System.out.println(CompanyEnum.SF.getCompany());
+    }
+}
+
+定义：
+//性别枚举[0:男 1:女 2:未知]
+public enum GenderEnum {
+    MAN(0),WOMEN(1),UNKNOWN(2);
+    private int code; //编码标识
+    private GenderEnum(int code){
+        this.code = code;
+    }
+    public int getCode() {
+        return code;
+    }
+}
+
+使用：
+//输出->0 、 1 、 2
+public class TestEnum {
+    public static void main(String[] args) {
+        System.out.println(GenderEnum.MAN.getCode());
+        System.out.println(GenderEnum.WOMEN.getCode());
+        System.out.println(GenderEnum.UNKNOWN.getCode());
+    }
+}
+
+往枚举中添加自己特定方法，以实现自己所需的相关业务逻辑。
+定义：
+public enum CompanyEnum {
+    SF("顺丰速运", 1001), YTO("圆通速递", 1002), STO("申通物流", 1003), YD("韵达快运", 1004), YZPY("中国邮政", 1005);
+    private CompanyEnum(String company, int code) {
+        this.company = company;
+        this.code = code;
+    }
+    private String company; // 公司名称
+    private int code; // 公司编码
+    public String getCompany() {
+        return company;
+    }
+    public void setCompany(String company) {
+        this.company = company;
+    }
+    public int getCode() {
+        return code;
+    }
+    public void setCode(int code) {
+        this.code = code;
+    }
+    //根据物流公司名字获取对应的编码
+    public static int getCodeByCompany(String company) {
+        for (CompanyEnum c : CompanyEnum.values()) {
+            if (c.getCompany().equals(company.trim())) {
+                return c.code;
+            }
+        }
+        return 0;
+    }
+    //根据物流公司编码获取对应的名字
+    public static String getCompanyByCode(int code) {
+        for (CompanyEnum c : CompanyEnum.values()) {
+            if (c.getCode() == code) {
+                return c.getCompany();
+            }
+        }
+        return null;
+    }
+}
+
+使用：
+//输出->1001 、 圆通速递 
+public class TestEnum {
+    public static void main(String[] args) {
+        System.out.println(CompanyEnum.getCodeByCompany("顺丰速运"));
+        System.out.println(CompanyEnum.getCompanyByCode(1002));
+    }
+}
+这种枚举用法，通常还可用于系统的错误码与对应的错误码描述，然后根据错误码获取错误码对应的描述。 
+
+------------------------------------------------------------------------------------------------------------------------------------
+三、例子
+/**
+* 枚举本身的一些方法使用
+*/
+public class TestEnum {
+    public static void main(String[] args) {
+        //返回此枚举常量的名称,继承自java.lang.Enum类,通常重写该方法以实现相关操作。输出->SF
+        System.out.println(CompanyEnum.SF.toString());
+        //返回此枚举常量的名称。输出->SF
+        System.out.println(CompanyEnum.SF.name());
+        //返回枚举常量的序数（它在枚举声明中的位置，其中初始常量序数为零）。输出->0
+        System.out.println(CompanyEnum.SF.ordinal());
+        //获取枚举中的常量个数。输出->5
+        System.out.println(CompanyEnum.SF.values().length);
+        //返回带指定名称的指定枚举类型的枚举常量。输出->顺丰速运
+        System.out.println(CompanyEnum.SF.valueOf(CompanyEnum.class, "SF").getCompany());  
+        //比较此枚举与指定对象的顺序;SF位置是0,YTO位置是1,结果为 0-1=-1。输出->-1
+        System.out.println(CompanyEnum.SF.compareTo(CompanyEnum.YTO)); 
+        //返回与此枚举常量的枚举类型相对应的 Class 对象。输出->class com.cndmss.util.CompanyEnum
+        System.out.println(CompanyEnum.SF.getDeclaringClass());
+        //。输出->true
+        System.out.println(CompanyEnum.SF.name().equals("SF"));
+        //。输出->true
+        System.out.println(CompanyEnum.SF.equals(CompanyEnum.SF));
+        //。输出->false
+        System.out.println(CompanyEnum.SF.equals(CompanyEnum.YTO));
+    }
+}
+
+/**
+ *EnumSet、EnumMap的使用
+ */
+public class TestEnum {
+    public static void main(String[] args) {
+         //1、 EnumSet的使用
+        EnumSet<CompanyEnum> companySet = EnumSet.allOf(CompanyEnum.class);
+        for (CompanyEnum company:companySet) {
+            System.out.println(company.getCode() + ":" + company.getCompany());
+        }
+        //2、EnumMap的使用
+        EnumMap<CompanyEnum, String> companyMap = new EnumMap(CompanyEnum.class);
+        companyMap.put(CompanyEnum.SF, "顺丰map");
+        companyMap.put(CompanyEnum.YTO, "圆通map");
+        Iterator<Entry<CompanyEnum, String>> iter = companyMap.entrySet().iterator();
+        while(iter.hasNext()){
+            Entry<CompanyEnum, String> entry = iter.next();
+            System.out.println(entry.getKey().name() + ":" + entry.getValue());
+        }
+    }
+}
+
+------------------------------------------------------------------------------------------------------------------------------------
