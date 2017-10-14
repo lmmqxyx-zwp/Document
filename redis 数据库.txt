@@ -1,6 +1,6 @@
 ﻿redis 数据库
 
-1.bat文件 6379.bat
+1.bat文件 6380.bat
 @echo off
 redis-server.exe redis-6380.conf
 @pause
