@@ -1,6 +1,6 @@
 <html>
  <head> 
-  <title>简洁TAB</title> 
+  <title>浮动的窗体</title> 
   <script type="text/javascript">
  function nTabs(thisObj, Num) {
   if (thisObj.className == "active") return;
