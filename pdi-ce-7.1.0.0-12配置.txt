@@ -1,4 +1,4 @@
-﻿启动时可能出现的错误：
+﻿启动时可能有可能出现的错误：
 
 cmd>E:\CommonTools\pdi-ce-7.1.0.0-12\data-integration\Spoon.bat
 
