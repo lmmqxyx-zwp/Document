@@ -1,3 +1,4 @@
+// 百度地图的底层样式
 map.setMapStyle({
 	styleJson: [{
 		featureType: 'water',
