@@ -1,5 +1,5 @@
-
---�ֶΣ�field
+﻿
+--字段：field
 create table t1(
 	id int primary key AUTO_INCREMENT,
 	f1 varchar(20) not null,
