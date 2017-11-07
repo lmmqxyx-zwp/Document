@@ -1,0 +1,19 @@
+markdown 语法
+
+编辑器：
+markdownpad2-setup.exe
+
+安装之后：视图界面不能正常显示
+  出现错误：this view has crashed！
+
+
+需要安装：awesomium_v1.6.6_sdk_win.exe
+
+然后就能正常使用
+
+markdownpad2激活码：
+
+User：
+Soar360@live.com
+授权：
+GBPduHjWfJU1mZqcPM3BikjYKF6xKhlKIys3i1MU2eJHqWGImDHzWdD6xhMNLGVpbP2M5SN6bnxn2kSE8qHqNY5QaaRxmO3YSMHxlv2EYpjdwLcPwfeTG7kUdnhKE0vVy4RidP6Y2wZ0q74f47fzsZo45JE2hfQBFi2O9Jldjp1mW8HUpTtLA2a5/sQytXJUQl/QKO0jUQY4pa5CCx20sV1ClOTZtAGngSOJtIOFXK599sBr5aIEFyH0K7H4BoNMiiDMnxt1rD8Vb/ikJdhGMMQr0R4B+L3nWU97eaVPTRKfWGDE8/eAgKzpGwrQQoDh+nzX1xoVQ8NAuH+s4UcSeQ==
