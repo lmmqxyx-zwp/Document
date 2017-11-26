@@ -1,0 +1,72 @@
+#/bin/bash
+
+##################################################################################
+#																				 #
+# # shell读取csv文件 插入数据库													 #
+#																				 #
+#	params 文件																	 #
+#																				 #
+##################################################################################
+
+echo "======================read csv to sql======================"
+
+echo "csvsql.sh params count : ${#}"
+
+# 参数检测
+if [ $# != 1 ];then  
+    echo " Usage: .\csvsql.sh 读取单个文件";  
+    exit  
+fi  
+
+# 文件检测
+if ! [ -f $1 ];then  
+    echo "[$1] 文件不存在"  
+    exit  
+elif ! [ -r $1 ];then  
+    echo "[$1] 文件不可读"  
+    exit  
+fi 
+
+# 测试读取文件 
+read -p "按键Enter进行读取 [$1] "  
+  
+# set IFS="\n" , read $1 file per line !  
+#IFS="  
+#"  
+  
+# i 行号
+echo "文件内容如下："
+echo "---------------------------START---------------------------"
+i=1  
+for line in `cat $1`  
+do  
+    echo line $i:$line  
+    let "i=$i+1"  
+done  
+echo "---------------------------E N D---------------------------"
+
+#读取文件到数组
+declare -a array # 声明一个数组
+iCount=0
+for line in `cat $1`  
+do
+	array[$iCount]=$line
+	#fstr=`echo $line | cut -d \, -f 1`
+	#echo $fstr
+	#判断
+	#先存储旧的分隔符
+	OLD_IFS="$IFS"
+	#设置分隔符
+	IFS="," 
+	arr=($line)
+	#恢复原来的分隔符
+	IFS="$OLD_IFS"	
+	echo "分割后的数组：行号($iCount)".${arr[@]}
+	echo "分割后的数组：长度：".${#arr[@]}
+	#此处可以循环取得arr（分割后的数组内容进行判断组装SQL）
+	#此处调用insert 插入数据库
+	let "iCount=$iCount+1"
+done
+
+
+echo "《调用结束》"  
