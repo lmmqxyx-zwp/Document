@@ -1,0 +1,32 @@
+<html>  
+<head>  
+<script type="text/javascript">  
+function show_alert(){  
+    alert('弹出框');  
+}  
+  
+function show_confirm(){  
+    var result = confirm('询问？');  
+    if(result){  
+        alert('是');  
+    }else{  
+        alert('否');  
+    }  
+}  
+  
+function show_prompt(){  
+    var value = prompt('输入内容：', '');  
+    if(value == null || value == '' || value.trim() == ''){  
+        show_prompt();  
+    } else{  
+        alert('输入内容：'+value);  
+    }  
+}  
+</script>
+</head>  
+<body>  
+	<input id="alert_button" type="button" value="alert" onclick="show_alert()" >  
+	<input id="confirm_button" type="button" value="confirm" onclick="show_confirm()" >  
+	<input id="prompt_button" type="button" value="prompt" onclick="show_prompt()" >  
+</body>  
+</html> 
