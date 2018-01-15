@@ -1,3 +1,0 @@
-red hat linux 修改root密码：
-开机的时候按键盘上的“E”进入编辑----->回车kernel /vmlinuz-2.6.9-5.EL ro root=LABLE=/rhgb quiet然后后面加上 1--->回车到原来界面，用“B”进入系统--->passwd root----->reboot
-
