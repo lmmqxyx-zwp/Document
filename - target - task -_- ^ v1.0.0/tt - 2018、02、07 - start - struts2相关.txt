@@ -1,0 +1,84 @@
+struts2框架相关
+
+----------------------------------------------------------------------------
+一、下载对应的框架版本
+
+二、搭建本地测试环境
+
+三、查阅相应的文档
+
+- 四、完成总结
+----------------------------------------------------------------------------
+
+-_-
+
+----------------------------------------------------------------------------
+1、对于文件上传
+
+	- 文件上传页面
+	例如：
+		<form ... enctype="multipart/form-data">
+			<input type = "file" name = "upload" />
+		</form>
+
+	- 后台Action
+	例如：
+		[ 说明 ]: struts2接收参数的方式有三种、
+			1、成员属性接收
+			2、域模型
+			3、ModelDriven
+		[ java ]:
+			private File upload; //上传的文件
+			private String uploadFileName; //文件的名字
+			private String uploadContentType; //文件的类型
+			...
+			//应该有对应的set、get方法
+			//uploadFileName、uploadContentType虽没有在jsp页面中出现、但是在
+			//在使用的时候就已经被初始化好了
+			
+----------------------------------------------------------------------------
+2、关于convention plugin
+	- 此插件的使用使得struts2不用再使用之前那种xml中繁琐的配置、需要用注解的
+		方式进行注解。就可以实现页面的跳转、参数的传递、方法的调用。
+		convention支持以jsp、ftl、vm、html、htm等五种后缀格式的文件
+	
+	- 具体应用：
+	- 在struts2.xml中可以进行配置
+	- <constant name="struts.convention.package.locators" value="web" />：
+		指定web为根节点。
+		默认的页面是指定在/WEB-INF/content/下面、也可以进行指定：
+		<constant name="strutsnvention.result.path" value="/WEB-INF/jsp" />
+		这样就可以指定在jsp下面放jsp页面。
+	- <constant name="struts.convention.package.locators.basePackage" 
+		value="com.by" />：
+		进行扫描包的配置、上面配置可以扫描com.by下面的有
+			@Namespace
+			@Results
+			@Result
+		注解的类
+	- 用main.action访问时、最先寻找的就是MainAction、默认执行execute方法。若
+		没有MainAction则会直接到main.jsp
+	- 访问规则：
+		@Namespace("/flow/core")
+		@Results({
+			@Result(name = "success",location="role-list.jsp"),
+			@Result(name = "redirectUser",location="user.action" type="redir
+			ectAction"),
+			@Result(name = "design", location = "flow-design.jsp")
+		})
+		public class TestAppAction {
+			public String design() {
+		
+		可以进行访问：
+		/flow/core/test-app.action        ->访问的是execute方法、返回success
+		时跳转到test-app.jsp页面
+		
+		/flow/core/test-app!design.action ->访问design方法、返回design字符串
+		时跳转到flow-design.jsp页面
+		
+		redirectUser这个是重定向到另外一个action
+----------------------------------------------------------------------------
+		
+
+
+
