@@ -1,0 +1,21 @@
+Nginx配置
+
+Nginx-
+     |_  conf   配置目录
+     |_  contrib
+     |_  docs 文档目录
+     |_  logs  日志目录
+     |_  temp 临时文件目录
+     |_  html 静态页面目录
+     |_  nginx.exe 主程序
+  
+    参考地址一：http://blog.csdn.net/cclovett/article/details/26377269/
+    参考地址二：http://blog.csdn.net/qwlovedzm/article/details/52772409
+    相关命令：http://blog.csdn.net/u010739551/article/details/51654859
+  
+    反向代理：反向代理（Reverse Proxy）方式是指以代理服务器来接受internet上的连接请求，然后将请求转发给内部网络上的服务器，
+并将从服务器上得到的结果返回给internet上请求连接的客户端，此时代理服务器对外就表现为一个服务器。
+  
+一、conf目录中修改nginx.conf文件
+    最好是复制一个nginx.conf文件进行修改，然后在启动Nginx的时候指定配置文件即可
+    指定配置文件的启动方式：nginx -c /usr/local/nginx/conf/nginx.conf
