@@ -1,4 +1,0 @@
-
-IntelliJ IDEA 2017.3.2
-
-激活server：http://idea.wrbug.com/
