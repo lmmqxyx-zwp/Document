@@ -1,0 +1,188 @@
+package com.by.annotation;
+
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.Set;
+
+/**
+ * java 枚举类型
+ * 
+ * @author zwp
+ */
+public class ZtcEnumExample {
+
+	public static void main(String[] args) {
+		System.out.println(Interface_A.MONDAY);
+		
+		// enum遍历
+		for (EnumA ea : EnumA.values()) {
+			System.out.println(ea);
+		}
+		
+		// switch case 操作
+		switchCase(EnumA.MONMONDAY);
+		
+		// 先后顺序
+		System.out.println(EnumA.MONMONDAY.compareTo(EnumA.THURSDAY)); // 先
+		System.out.println(EnumA.THURSDAY.compareTo(EnumA.MONMONDAY)); // 后
+		
+		// 定义的顺序
+		System.out.println(EnumA.THURSDAY.ordinal());
+		
+		// 名字
+		System.out.println(EnumA.MONMONDAY.name());
+		
+		// enum的自定义属性
+		System.out.println(EnumB.TUESDAY.getValue()); // 在初始化的时候getValue()方法被重写
+		System.out.println(EnumB.MONMONDAY.getValue());
+		
+		// 当有getValue()方法的时候输出
+		System.out.println(EnumB.MONMONDAY); // MONMONDAY 并不是value的值 ***
+		
+		// EnumSet的使用
+		System.out.println("---EnumSet的使用---");
+		EnumSet<EnumA> enumAMap = EnumSet.allOf(EnumA.class);
+		for (EnumA ea : enumAMap) {
+			System.out.println(ea);
+		}
+		
+		// EnumMap的使用
+		System.out.println("---EnumMap的使用---");
+		EnumMap<EnumB, String> enumBMap = new EnumMap<EnumB, String>(EnumB.class);
+		System.out.println(EnumB.MONMONDAY);
+		enumBMap.put(EnumB.MONMONDAY, "TEST");
+		System.out.println(EnumB.MONMONDAY);
+		Set<EnumB> set = enumBMap.keySet();
+		for (EnumB eb : set) {
+			System.out.println(eb.name());
+			System.out.println(enumBMap.get(eb));
+		}
+		
+		// 判断自定的enum是不是java.lang.Enum的子类
+		if(EnumB.MONMONDAY instanceof Enum) {
+			System.out.println("EnumB.MONMONDAY是Enum的子类");
+		}
+		
+		// 枚举实现接口
+		System.out.println("---枚举实现接口---");
+		System.out.println(EnumC.RED.toString());
+		EnumC.RED.print();
+		
+		// 使用接口组织枚举
+		System.out.println(InterfaceC.EnumD.BLACK_COFFEE);
+	}
+	
+	// switch case 操作
+	public static void switchCase(EnumA ea) {
+		switch(ea) {
+			case MONMONDAY:
+				System.out.println("switch case : - 星期一");
+			break;
+			case TUESDAY:
+				System.out.println("switch case : - 星期二");
+			break;
+			default:
+			break;
+		}
+	}
+	
+}
+
+/**
+ * 作用：定义了一个星期
+ * 一、以前定义常量使用interface来实现
+ * 二、JDK1.5后出现了枚举类型
+ * 三、interface中的常量默认是public static final的
+ */
+interface Interface_A {
+	String MONDAY = "MONDAY";
+	String TUESDAY = "TUESDAY";
+	String WEDNESDAY = "WEDNESDAY";
+	String THURSDAY = "THURSDAY";
+	String FRIDAY = "FRIDAY";
+	String SATURDAY = "SATURDAY";
+	String SUNDAY = "SUNDAY";
+}
+
+/**
+ * 枚举
+ */
+enum EnumA {
+	MONMONDAY,
+	TUESDAY,
+	WEDNESDAY,
+	THURSDAY,
+	FRIDAY,
+	SATURDAY,
+	SUNDAY;
+}
+
+// 加一个value属性
+enum EnumB {
+	MONMONDAY(1), TUESDAY(2) {
+		// 在这块可以重写 getValue()方法
+		public int getValue() {
+			return 0;
+		}
+	};
+	
+	private int value;
+	
+	public int getValue() {
+		return value;
+	}
+	
+	EnumB() {
+		
+	}
+	
+	// 不能使用public、protected
+	private EnumB(int value) {
+		this.value = value;
+	}
+}
+
+interface InterfaceB {  
+    void print();  
+    String getInfo();  
+}
+
+enum EnumC implements InterfaceB{  
+    RED("红色", 1), GREEN("绿色", 2), BLANK("白色", 3), YELLO("黄色", 4);  
+    // 成员变量  
+    private String name;  
+    private int index;  
+    // 构造方法  
+    private EnumC(String name, int index) {  
+        this.name = name;  
+        this.index = index;  
+    }  
+    // 接口方法  
+    @Override  
+    public String getInfo() {  
+        return this.name;  
+    }  
+    // 接口方法  
+    @Override  
+    public void print() {  
+        System.out.println(this.index+":"+this.name);  
+    }  
+}
+
+interface InterfaceC {  
+    enum EnumD implements InterfaceC{  
+        BLACK_COFFEE,DECAF_COFFEE,LATTE,CAPPUCCINO  
+    }  
+    enum EnumE implements InterfaceC{  
+        FRUIT, CAKE, GELATO  
+    }  
+} 
+
+// 英文
+// Monday      星期一
+// Tuesday     星期二
+// Wednesday   星期三
+// Thursday    星期四
+// Friday      星期五
+// Saturday    星期六
+// Sunday      星期日
