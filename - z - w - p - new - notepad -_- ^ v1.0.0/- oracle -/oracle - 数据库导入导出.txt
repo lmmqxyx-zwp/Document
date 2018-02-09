@@ -1,0 +1,8 @@
+﻿导出dmp文件
+导出所有用户的表
+exp 用户名/密码@远程的IP:端口/实例 file=存放的位置:\文件名称.dmp full = y
+导出指定用户的表
+exp 用户名/密码@远程的IP:端口/实例 file=存放的位置:\文件名称.dmp owner = 用户名
+
+导入dmp文件
+imp 用户名/密码@远程的IP:端口/实例 full=y  file=存放的位置:\文件名称.dmp ignore=y
