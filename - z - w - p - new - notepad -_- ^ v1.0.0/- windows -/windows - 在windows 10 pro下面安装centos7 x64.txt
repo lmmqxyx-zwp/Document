@@ -1,0 +1,42 @@
+在windows 10 pro下面安装centos7 x64
+============================================================================
+
+1、在系统启动时报错 - error：unknow filesystem
+============================================================================
+- 查看对应的磁盘
+	grub rescue>ls
+	(hd0) (hd0,msdos5) (hd0,msdos3) (hd0,msdos2) (hd0,msdos1)
+
+- 设置启动的项
+	grub rescue>set root=(hd0,msdos3)
+	grub rescue>set prefix=(hd0,msdos3)/grub2
+
+- 查看是否设置成功、在设置之前也可以先查看一下
+	grub rescue>set
+	root=(hd0,msdos3)
+	prefix=(hd0,msdos3)/grub2
+
+- 菜单的安装
+	grub rescue>insmod normal
+
+- 启动菜单
+	grub rescue>normal
+
+- 此时就可以看到启动选项了
+
+- 进入系统后
+	sudo update-grub2
+	sudo grub-install /dev/sda
+
+2、先安装了windows 10 pro、再安装centos7 x64后、启动项消失
+============================================================================
+- sudo vi /boot/grub2/grub.cfg
+- 找到 ### BEGIN /etc/grub.d/30_os-prober ###
+	添加下面内容：
+	------------------------------------------------------------------------
+	menuentry "Windows 10 pro (loader) (on /dev/sda1)" {
+	insmod ntfs
+	set root=(hd0,1)
+	chainloader +1
+	}
+	------------------------------------------------------------------------
