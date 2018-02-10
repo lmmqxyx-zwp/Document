@@ -1,0 +1,15 @@
+﻿Enterprise Manager Database Control URL - (orcl) :
+http://zwp-xpserver:1158/em
+
+数据库配置文件已经安装到 C:\oracle\product\10.2.0,同时其他选定的安装组件也已经安装到 C:\oracle\product\10.2.0\db_1。
+
+iSQL*Plus URL 为:
+http://zwp-xpserver:5560/isqlplus
+
+iSQL*Plus DBA URL 为:
+http://zwp-xpserver:5560/isqlplus/dba
+
+
+--------------------------------------------------------------
+最好在安装完成后记载数据库的用户名和密码、对于每一个数据库都使
+用一个文档进行记载、类似于上面部分

@@ -1,0 +1,81 @@
+代码拉去地址：
+ssh://zwp@zwp-xpserver/ICW/repository/jbpm1.0.0
+
+============================================================================
+服务端的配置
+1、下载openssh
+2、下载git服务端
+
+3、安装Copssh_4.1.0_Installer.zip在根目录下、例如c:/
+4、安装Git-1.7.8-preview20111206.exe
+
+5、在网上找到对应配置xp下git服务端的内容、进行配置
+	详细情形：
+	- 需要配置环境变量
+	- 需要把git下的部分文件拿到openssh下
+	- 配置好之后需要生成公钥和私钥、这个并不是必须的
+	- 配置好之后在cmd中可以使用命令来连接openssh
+		- 命令：[ ssh 用户名@主机名 ]
+		- 有输入密码的提示
+
+6、可以在配置好的环境上建立文件夹
+7、进入文件夹之后可以用[ git init ]命令进行初始化仓库
+8、初始化完成后、可以使用[ ls -al ]进行查看、会看到有一个.git的目录、此时还没
+有最终完成
+9、用下面的文件进行覆盖.git/config文件
+文件内容：
+-----------------------------------------------------------------------------
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = false
+	logallrefupdates = true
+	symlinks = false
+	ignorecase = true
+	hideDotFiles = dotGitOnly
+
+[receive]
+
+denyCurrentBranch = ignore
+[gui]
+	wmstate = zoomed
+	geometry = 443x256+66+66 469 293
+-----------------------------------------------------------------------------
+
+下面是网上的教程
+============================================================================
+Git有四种协议传输数据：本地协议，SSH协议，Git协议和HTTP(S)协议。这四种协议各有应用场合，其中，最常用的是SSH协议，这是因为大多数环境已经支持通过SSH对服务器的访问，即便不支持，架设SSH协议也是比较容易的。而且，SSH是四种协议中唯一便于同时具有读和写功能的网络协议，这对协同开发是必要的，所以这里选择SSH协议来搭建Git服务器。
+
+第一步：准备工具
+
+1.msysgit：Windows环境下的Git，通过该工具安装Git。
+
+2. Copssh：通过该工具在Git服务器上安装SSH协议及客户端。
+
+第二步：安装Git和Copssh
+
+在服务器端安装Git和Copssh。假设Git的安装目录为“C:\Git”，Copssh的安装目录为“C:\SSH”。注意在安装Copssh时，需要手动激活一个用户，假设为最高权限管理者Administrator，因为我们要使用公钥私钥方式进行认证，所以不要勾选“password authenticatin”选项。完成后，进入SSH目录，找到etc目录下的ssh_config和sshd_config文件，去除ssh_config中“# Port 22”前的#号，确认sshd_config文件中的Port也为22。同时，确保防火墙没有关闭SSH端口。
+
+第三步：使Copssh能使用Git
+
+经过前两步，服务器上Git和Copssh都已能正常工作，也可以通过SSH协议访问服务器了，但是还不能通过Copssh使用Git，这样还不能远程管理Git仓库。要想远程使用Git，需完成如下工作：在“C:\Git\libexec\git-core”目录下找到git.exe,git-upload-pack.exe,git-upload-archive.exe和git-receive-pack.exe四个文件，将它们复制到“C:\SSH\bin”目录下。同时，将“C:\Git\bin”目录下的“libiconv-2.dll”文件也复制到该目录下。最后，重启Copssh即可。这样，通过SSH协议连上服务器后就可以使用Git了。
+
+第四步：配置用户环境
+
+默认情况下，Copssh会在“C:\Documents and Settings\Administrator”目录下寻找authorized_keys文件，这是我们不希望看到的，需要配置使得authorized_keys文件位于“C:\SSH\home\Administrator\.ssh”目录下。在“C:\SSH\home\Administrator”目录下找到.bashrc文件，在“# User dependent .bashrc file”行下添加“ export HOME=/C/SSH/home/Administrator”，注意“/C/SSH”为Copssh安装目录，按照自己的情况填写。同时注意，该行前面有一个空格且斜线为Unix下的风格样式。完成修改后，将.bashrc文件复制到“C:\Documents and Settings\Administrator”目录下。
+
+第五步：测试
+
+打开本地Git，要想通过SSH协议与Git服务器通信，需要通过公钥私钥认证。为了检查本地是否存在公钥私钥文件对，可以通过命令“cd ~/.ssh”切换到.ssh目录查看，文件名大致为id_rsa.pub和id_rsa，前者为公钥，后者为私钥。如果不存在，则通过git命令“ssh-keygen”产生，然后将产生的公钥文件内容加入到Git服务器上的authorized_keys文件即可。
+
+假设Git服务器上存在hello_world.git仓库，位于“C:\SSH\home\Administrator”目录下，且Git服务器IP为192.168.10.45，那么就可以在本地克隆hello_world.git仓库，命令为“git clone Administrator@192.168.10.45:hello_world.git”，注意用户名（即：Administrator）区分大小写。
+
+============================================================================
+ln -s /cygdrive/c/zwp/bin/git.exe git.exe 
+ln -s /cygdrive/c/zwp/libexec/git-core/git-receive-pack.exe git-receive-pack.exe 
+ln -s /cygdrive/c/zwp/libexec/git-core/git-upload-archive.exe git-upload-archive.exe 
+ln -s /cygdrive/c/zwp/libexec/git-core/git-upload-pack.exe git-upload-pack.exe
+
+
+上面出现的zwp为用户名
+

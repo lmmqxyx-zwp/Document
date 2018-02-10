@@ -1,0 +1,13 @@
+一、主要的类
+
+RuntimeManager来简化和强化知识API的使用，特别是在进程的上下文中，它提供了控制实际行动的可配置策略
+
+1、Singleton - 运行时管理维护单个KieSession，不用管进程数量
+2、运行时管理器为每个请求提供新的KieSession
+3、运行时管理器维护进程实例和KieSession之间的映射，每当使用给定的进程实例时总是提供相同的KieSession
+
+RuntimeManager主要负责管理RuntimeEngine实例并将其传递给调用者。反过来，RuntimeEngine封装了JBPM引擎的两个最重要的元素KieSession和TaskService
+
+RuntimeEngine可以获取KieSession和TaskService
+
+

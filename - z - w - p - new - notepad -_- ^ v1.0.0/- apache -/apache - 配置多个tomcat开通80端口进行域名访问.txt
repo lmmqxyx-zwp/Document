@@ -1,0 +1,183 @@
+准备工作
+============================================================================
+1、下载apache、
+2、下载tomcat、
+============================================================================
+
+windows 10 pro下
+============================================================================
+一、配置hosts文件
+	- 文件路径：C:\Windows\System32\drivers\etc\hosts
+	
+	初始文件内容：
+	------------------------------------------------------------------------
+	...
+	# localhost name resolution is handled within DNS itself.
+	#	127.0.0.1       localhost
+	#	::1             localhost
+	------------------------------------------------------------------------
+	
+	- 配置域名：
+	------------------------------------------------------------------------
+	#	127.0.0.1       localhost
+	#	::1             localhost
+	+ 此处添加下面内容即可：
+		127.0.0.1       域名
+		例如：
+		127.0.0.1       server.zhozho.cn
+	注意：格式127.0.0.1 以 + 对齐为准
+	------------------------------------------------------------------------
+
+二、配置apache
+	- \Apache24\conf文件夹下：
+	
+	1、httpd.conf文件配置：
+	========================================================================
+	Define SRVROOT "E:/Apache24" - line : 38
+	ServerRoot "${SRVROOT}" - line : 39
+	------------------------------------------------------------------------
+	
+	修改为下面的 - granted  - line : 227
+	<Directory />
+		AllowOverride none
+		Require all granted
+	</Directory>
+	------------------------------------------------------------------------
+	
+	修改之前：
+	<Directory />
+		AllowOverride none
+		Require all denied
+	</Directory>
+	------------------------------------------------------------------------
+	
+	在文件末尾：
+	Include conf/mod_jk.conf 
+	Include conf/vhosts.conf 
+	------------------------------------------------------------------------
+	
+	2、vhosts.conf文件配置：
+	========================================================================
+	#portal
+	<VirtualHost *:80>
+		DocumentRoot "E:\AJS\tomcatManual\portal\webapps\portal"
+		ServerName   portal.zhozho.cn
+		JkMount /portal/* portal
+		ErrorLog logs/portal-error_log
+		CustomLog logs/portal-access_log combined
+		<Directory "E:\AJS\tomcatManual\portal\webapps\portal">
+		Options FollowSymLinks MultiViews Includes
+		Require all granted
+		</Directory>
+	</VirtualHost>
+
+	#sso
+	<VirtualHost *:80>
+		ServerName server.zhozho.cn
+		JkMount /* server
+		ErrorLog "logs/server-error_log"
+		CustomLog "logs/server-access_log" common
+	</VirtualHost>
+
+	#flow
+	<VirtualHost *:80>
+		ServerName flow.zhozho.cn
+		JkMount /* flow
+		ErrorLog "logs/flow-error_log"
+		CustomLog "logs/flow-access_log" common
+	</VirtualHost>
+
+	#bid
+	<VirtualHost *:80>
+		ServerName bid.zhozho.cn
+		JkMount /* bid
+		ErrorLog "logs/bid-error_log"
+		CustomLog "logs/bid-access_log" common
+	</VirtualHost>
+	
+	------------------------------------------------------------------------
+	注 - 上面的四个站点要使用四个tomcat来发布、除了第一个之外、所有的站点都
+	必须在tomcat的/webapps/ROOT下面、把发布好的内容直接拷贝到/ROOT下、删除本
+	来在/ROOT下面的东西、这样用localhost:8080/就直接可以访问、这样就能配置给
+	apache了。
+	
+	3、vhosts.conf文件配置：
+	========================================================================
+	worker.list=server,flow,portal,bid
+
+	#server
+	worker.server.type=ajp13
+	worker.server.port=8109
+	worker.server.host=127.0.0.1
+	worker.server.lbfactor=50
+	worker.server.cachesize=80
+	worker.server.cache_timeout=600
+	worker.server.socket_keepalive=1
+	worker.server.recycle_timeout=300
+	worker.server.max_packet_size = 65536
+
+	#flow
+	worker.flow.type=ajp13
+	worker.flow.port=8309
+	worker.flow.host=127.0.0.1
+	worker.flow.lbfactor=50
+	worker.flow.cachesize=80
+	worker.flow.cache_timeout=600
+	worker.flow.socket_keepalive=1
+	worker.flow.recycle_timeout=300
+	worker.flow.max_packet_size = 65536
+
+	#portal
+	worker.portal.type=ajp13
+	worker.portal.port=8009
+	worker.portal.host=127.0.0.1
+	worker.portal.lbfactor=50
+	worker.portal.cachesize=80
+	worker.portal.cache_timeout=600
+	worker.portal.socket_keepalive=1
+	worker.portal.recycle_timeout=300
+	worker.portal.max_packet_size = 65536
+
+	#bid
+	worker.bid.type=ajp13
+	worker.bid.port=8209
+	worker.bid.host=127.0.0.1
+	worker.bid.lbfactor=50
+	worker.bid.cachesize=80
+	worker.bid.cache_timeout=600
+	worker.bid.socket_keepalive=1
+	worker.bid.recycle_timeout=300
+	worker.bid.max_packet_size = 65536
+	------------------------------------------------------------------------
+	注 - 上面配置详解：
+	   - worker.bid.type 这是和tomcat相关的类型、在tomcat配置文件server.xml
+	   中
+	       <Connector port="8209" protocol="AJP/1.3" redirectPort="8443" />
+	   此处就能看到protocol
+	   ---------------------------------------------------------------------
+	   不知道能不能使用http类型 ???
+	   ---------------------------------------------------------------------
+	   - worker.bid.port protocol="AJP/1.3"的端口
+	   
+	   ---------------------------------------------------------------------
+	   为此tomcat的server.xml中需要修改三处配置、这样才能同时启动四个tomcat
+	   而不出现端口冲突
+	   ---------------------------------------------------------------------
+	   - 
+		   <Server port="8208" shutdown="SHUTDOWN">
+	   -
+	       <Connector port="8210" protocol="HTTP/1.1" 
+               connectionTimeout="20000" 
+               redirectPort="8443" />
+	   -
+	       <Connector port="8209" protocol="AJP/1.3" redirectPort="8443" />
+
+
+三、先启动apache、在启动tomcat
+============================================================================
+
+四、测试
+============================================================================
+注意 - 要是域名不能访问
+	1、先查看配置文件
+	2、看能不能用localhost访问tomcat的HTTP端口

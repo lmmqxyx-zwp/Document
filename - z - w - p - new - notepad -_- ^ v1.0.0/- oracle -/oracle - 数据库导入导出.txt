@@ -5,5 +5,14 @@ exp 用户名/密码@远程的IP:端口/实例 file=存放的位置:\文件名�
 导出指定用户的表
 exp 用户名/密码@远程的IP:端口/实例 file=存放的位置:\文件名称.dmp owner=(用户名)
 
+例子 - 
+	exp zwp/zwp@192.168.11.177:1521/orcl file=c:\zwp.dmp full = y
+	exp zwp/zwp@192.168.11.177:1521/orcl file=c:\zwp.dmp owner=(zwp)
+	
+
 导入dmp文件
+
 imp 用户名/密码@远程的IP:端口/实例 file=存放的位置:\文件名称.dmp fromuser=(用户名)
+
+例子 - 
+	imp zwp/zwp@192.168.11.177:1521/orcl file=c:\zwp.dmp fromuser=(zwp)

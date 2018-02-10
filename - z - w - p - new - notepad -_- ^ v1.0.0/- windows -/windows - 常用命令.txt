@@ -1,0 +1,22 @@
+﻿windows下面常用命令
+
+1、查看下面的端口详细是被什么占用了？
+netstat -aon|findstr 端口
+例子：
+C:\Users\ThinkPad\Desktop>netstat -aon|findstr 9990
+  TCP    127.0.0.1:9990         0.0.0.0:0              LISTENING       2728
+
+
+
+2、windows下删除文件夹命令
+rd/s/q D:\app  （强制删除文件文件夹和文件夹内所有文件）
+del/f/s/q D:\app.txt    （强制删除文件，文件名必须加文件后缀名）
+
+
+
+3、查看谷歌浏览器版本
+url输入：
+chrome://version/
+
+4、修改cmd窗口的编码为utf-8
+chcp 65535
