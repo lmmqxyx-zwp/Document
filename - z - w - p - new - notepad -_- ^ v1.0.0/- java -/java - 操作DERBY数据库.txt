@@ -1,0 +1,105 @@
+java - 操作DERBY数据库
+============================================================================
+
+连接Derby数据库
+----------------------------------------------------------------------------
+try {
+	String dbURL = “jdbc:derby://localhost:1527/debryDB”;
+	username=”root”;
+	password=”root”;
+	Connection connection = DriverManager.getConnection(dbURL,username,password);
+} catch(SQLException e) {
+	for(Throwable t : e) {
+			t.printStackTrace();
+	}
+}
+
+建立连接之后操作数据库
+----------------------------------------------------------------------------
+	- Connection类包含的有用的方法：
+	- PrepareStatement：建立一个预先编译好的查询语句，送给数据库。
+	- prepareCall：访问数据库存放的过程或函数
+	- Rollback/commit：控制商务交互
+	- Close：关闭连接
+	- isClosed：判断链接是否过期
+	- getMetaData：用这个可以寻找有关数据库的信息，该方法返回DatabaseMetaData
+		对象，它有几个方法用来发现数据库的名字和版本，JdbC driver信息，表格列
+		的名称和列数
+	
+建立Statement对象
+----------------------------------------------------------------------------
+	- Statement对象用来送查询和命令给数据库，由connection类和createStatement
+		方法创建，大多数的数据库driver允许一个链接可以有多个Statement对象
+	- Statement statement = Connection.createStatement();
+
+执行查询和更改
+----------------------------------------------------------------------------
+	String sql = "select...";
+	ResultSet rs = statement.executeQuery(sql);
+----------------------------------------------------------------------------
+
+Statement类的几个方法
+----------------------------------------------------------------------------
+	- executeQuery():执行sql查询
+	- executeUpdate():用于 update insert delete 返回行数
+	- executeBatch():把一组命令放在一起执行，返回一个数组，包含每个命令的更新
+		的次数，可以用addBatch()方法添加命令到捆绑的祖上
+	- SetQueryTimeout():指定driver等待结果的时间
+	- getMaxRows/setMaxRows:决定ResultSet可能包含的行数，超过行数就删除掉
+	
+处理结果
+----------------------------------------------------------------------------
+	用ResultSet的next方法每次移动一行，在每一行当中用getXXX()方法，参数可以是
+	列的名字，也可以是列的序数，返回的结果可以是java 的各种类型
+
+关闭连接
+----------------------------------------------------------------------------
+	Connection.close();
+
+----------------------------------------------------------------------------
+配置环境变量：
+DERBY_HOME=E:\JavaSourceCode\DBderby\db-derby-10.10.2.0-bin\bin;
+
+cmd>
+	dblook
+	ij
+	sysinfo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
