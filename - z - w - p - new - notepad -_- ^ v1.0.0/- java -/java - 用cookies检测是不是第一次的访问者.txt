@@ -1,0 +1,70 @@
+java - 用cookies检测是不是第一次的访问者
+============================================================================
+	//Cookie...
+	Cookie cookie = new Cookie(cookiename,cookievalue);
+	//在
+	Cookie cookie = new Cookie("userid", "1");
+	Cookie coohie0 = new Cookie("admin", "admin");
+	coohie0.setMaxAge(10);  // 设置cookie存活的时间
+	response.addCookie(coohie0);		
+	response.addCookie(cookie);
+	response.sendRedirect("admin/index.jsp"); //跳转之后
+	<%
+		Cookie[] cookie = request.getCookies();  //接收cookie
+		for(int i = 0;i<cookie.length;i++) {
+			out.println(cookie[i].getName()+"==="+cookie[i].getValue());
+			%>
+			<br />
+			<%
+		}
+	%>
+============================================================================
+//用cookies检测是不是第一次的访问者
+package com.by.test;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class FirstRequestServlet extends HttpServlet {
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=gb2312");
+		request.setCharacterEncoding("gb2312");
+		boolean newbie = true;
+		Cookie[] cookies = request.getCookies();
+		
+		if(cookies!=null) {
+			for(int i = 0;i<cookies.length;i++) {
+				Cookie cookie = cookies[i];
+				if((cookie.getName().equals("repeatVisitor"))&&(cookie.getValue().equals("yes"))) {
+					newbie = false;
+					break;
+				}
+			}
+		}
+		String title;
+		if(newbie) {
+			Cookie returnVisitor = new Cookie("repeatVisitor","yes");
+			returnVisitor.setMaxAge(100);
+			response.addCookie(returnVisitor);
+			title = "欢迎光临";
+		} else {
+			title="欢迎再次光临";
+		}
+
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+		String doc = "<html><head><title>my title</title></head><body>"+title+"</body></html>";
+		out.println(doc);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doPost(request, response);
+	}
+}

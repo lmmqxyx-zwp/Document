@@ -1,0 +1,22 @@
+tomcat - tomcat目录结构
+
+============================================================================
+
+servlet的配置
+----------------------------------------------------------------------------
+	在Apache下面tomcat目录\bin\---   copy
+ 								   ---servlet-api.jar
+								   ---jsp-api.jar
+								   ---el-api.jar
+								   ---tomcat-dbop.jar
+	jre\lib\ext paste
+	
+tomcat目录
+----------------------------------------------------------------------------
+	Bin					tomcat的工作文件
+	Conf.xml			tomcat定形文件
+	Lib 				为所有web应用共享的.jar文件
+	Log 				日志文件
+	Temp 				jvm使用的临时文件
+	Webapp 				web应用所有目录和文件
+	Work				tomcat为jsp产生的servlet原始码和类文件

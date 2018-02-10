@@ -1,0 +1,7 @@
+java - reques、response请求转发与重定向
+
+============================================================================
+请求转发
+request.getRequestDispatcher("").forward(request, response);
+重定向
+response.sendRedirect("");

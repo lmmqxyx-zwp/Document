@@ -1,0 +1,18 @@
+java - servlet配置
+
+============================================================================
+web.xml配置：
+----------------------------------------------------------------------------
+<servlet>
+	<servlet-name>zServlet</servlet-name>
+	<servlet-class>com.by.servlet.ZServlet</servlet-class>
+</servlet>
+
+<servlet-mapping>
+	<servlet-name>zServlet</servlet-name>
+	<url-pattern>/zServlet</url-pattern>
+</servlet-mapping>
+
+访问：
+----------------------------------------------------------------------------
+http://localhost:8080/工程名/zServlet就可以访问到该servlet
