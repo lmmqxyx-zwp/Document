@@ -1,4 +1,4 @@
-在windows 10 pro下面安装centos7 x64
+﻿在windows 10 pro下面安装centos7 x64
 ============================================================================
 
 1、在系统启动时报错 - error：unknow filesystem
@@ -28,6 +28,8 @@
 	sudo update-grub2
 	sudo grub-install /dev/sda
 
+参见 - http://blog.sina.com.cn/s/blog_5f3e71e00100kwe2.html
+
 2、先安装了windows 10 pro、再安装centos7 x64后、启动项消失
 ============================================================================
 - sudo vi /boot/grub2/grub.cfg
@@ -40,3 +42,5 @@
 	chainloader +1
 	}
 	------------------------------------------------------------------------
+
+参见- https://www.cnblogs.com/kuics/p/6118564.html
