@@ -9,6 +9,14 @@ ssh://zwp@zwp-xpserver/ICW/repository/jbpm1.0.0
 3、安装Copssh_4.1.0_Installer.zip在根目录下、例如c:/
 4、安装Git-1.7.8-preview20111206.exe
 
++ 需要拷贝一些文件、创建一些快捷方式
+----------------------------------------------------------------------------
+ln -s /cygdrive/c/zwp/bin/git.exe git.exe 
+ln -s /cygdrive/c/zwp/libexec/git-core/git-receive-pack.exe git-receive-pack.exe 
+ln -s /cygdrive/c/zwp/libexec/git-core/git-upload-archive.exe git-upload-archive.exe 
+ln -s /cygdrive/c/zwp/libexec/git-core/git-upload-pack.exe git-upload-pack.exe
+----------------------------------------------------------------------------
+
 5、在网上找到对应配置xp下git服务端的内容、进行配置
 	详细情形：
 	- 需要配置环境变量
