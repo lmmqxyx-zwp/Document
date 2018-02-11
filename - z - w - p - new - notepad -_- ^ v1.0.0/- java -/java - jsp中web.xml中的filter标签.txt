@@ -1,0 +1,48 @@
+java - jsp中web.xml中的filter标签
+============================================================================
+	<!--映射过滤器-->
+	<filter-mapping>
+	   <filter-name>zFilter</filter-name>
+	   <!--“/*”表示拦截所有的请求 -->
+	   <url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+----------------------------------------------------------------------------
+	<filter-mapping>：元素用于设置一个 Filter 所负责拦截的资源。一个Filter拦
+截的资源可通过两种方式来指定：Servlet 名称和资源访问的请求路径
+
+	<filter-name>：子元素用于设置filter的注册名称。该值必须是在<filter>元素中
+声明过的过滤器的名字
+
+	<url-pattern>：设置 filter 所拦截的请求路径(过滤器关联的URL样式)
+
+	<servlet-name>：指定过滤器所拦截的Servlet名称
+
+	<dispatcher>：指定过滤器所拦截的资源被 Servlet 容器调用的方式，可以是REQU
+EST,INCLUDE,FORWARD和ERROR之一，默认REQUEST。用户可以设置多个<dispatcher> 子
+元素用来指定 Filter 对资源的多种调用方式进行拦截
+
+	<filter-mapping>
+		<filter-name>testFilter</filter-name>
+		<url-pattern>/parttern1/*</url-pattern>
+		<url-pattern>/parttern2/*</url-pattern>
+		<url-pattern>/parttern3/*</url-pattern>
+		<url-pattern>/parttern4/*</url-pattern>
+		<url-pattern>/parttern5/*</url-pattern>
+		<url-pattern>/parttern6/*</url-pattern>
+		<url-pattern>/parttern7/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	
+	------------------------------------------------------------------------
+	REQUEST：	当用户直接访问页面时，Web容器将会调用过滤器。如果目标资源是通过
+				RequestDispatcher的include()或forward()方法访问时，那么该过滤器
+				就不会被调用。
+	INCLUDE：	如果目标资源是通过RequestDispatcher的include()方法访问时，那么
+				该过滤器将被调用。除此之外，该过滤器不会被调用。
+	FORWARD：	如果目标资源是通过RequestDispatcher的forward()方法访问时，那么
+				该过滤器将被调用，除此之外，该过滤器不会被调用。
+	ERROR：		如果目标资源是通过声明式异常处理机制调用时，那么该过滤器将被调
+				用。除此之外，过滤器不会被调用。
+	------------------------------------------------------------------------
