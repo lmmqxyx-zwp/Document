@@ -1,0 +1,29 @@
+1、使用PLSQL
+
+2、先安装对用位数的客户端、x86或者x64
+
+3、安装完成客户端之后、必须配置相应的环境变量
+	- ORACLE_HOME = ...
+	- 添加到环境变量中
+
+4、安装PLSQL
+
+5、安装汉化软件
+
+6、更改Oracle客户端中的.ora文件（tnsnames.ora）
+	- 路径E:\CommonUtils\PLSQL\Oracle\Instant Client\network\admin\tnsnames.ora
+
+=============================================================================================
+
+DummyDatabase =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.199.179)(PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = orcl.lan)
+    )
+  )
+
+添加上面这一段就可以创建一个连接
