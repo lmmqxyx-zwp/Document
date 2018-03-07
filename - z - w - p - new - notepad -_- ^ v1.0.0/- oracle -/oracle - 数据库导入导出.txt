@@ -17,6 +17,9 @@ imp 用户名/密码@远程的IP:端口/实例 file=存放的位置:\文件名�
 例子 - 
 	imp zwp/zwp@192.168.11.177:1521/orcl file=c:\zwp.dmp fromuser=(zwp)
 
+linux oracle导入dmp（在Oracle用户下）
+	imp zwp/zwp file=/home/oracle/zwp.dmp ignore=y full=y
+
 	
 --------------------------------------------------------
 导入可能出现的问题
