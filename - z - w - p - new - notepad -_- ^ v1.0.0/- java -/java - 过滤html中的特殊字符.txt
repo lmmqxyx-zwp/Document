@@ -1,0 +1,70 @@
+由于java中的String是不可变的、所以在此处用可变的StringBuffer
+==================================================================
+<、>、”、&4个字符特殊
+public static String filter(String input) {
+
+	if(!hasSpecialChars(input)) {
+		return input;	//若输入的不是那四个里面的一个的话就返回输入的
+	}
+	
+	//要是非把那几个字符输入进来之后  怎么过滤
+	StringBuffer filtered = new StringBuffer(input.length());  //缓冲流
+	char c;
+	for(int i = 0;i<input.length();i++) {
+		c = input.charAt(i);
+		switch (c) {
+		case '<':
+			filtered.append("&lt"); //append() 追加
+			break;
+		case '>':
+			filtered.append("&gt");
+			break;
+		case '&':
+			filtered.append("&amp");
+			break;
+		case '"':
+			filtered.append("&quot");
+			break;
+
+		default:
+			filtered.append(c);
+			break;
+		}
+	}
+	
+	return filtered.toString();
+}
+
+private static boolean hasSpecialChars(String input) {
+
+	boolean flag = false;
+	if ((input != null) && (input.length() > 0)) {
+		char c;
+		for (int i = 0; i < input.length(); i++) {	//扫描字符串
+			c = input.charAt(i);
+			switch (c) {
+			case '<':
+				flag = true;
+				break;
+			case '>':
+				flag = true;
+				break;
+			case '&':
+				flag = true;
+				break;
+			case '"':
+				flag = true;
+				break;
+			default:
+				flag = false;
+				break;
+			}
+		}
+		
+	}
+	return flag;
+}
+
+
+
+
