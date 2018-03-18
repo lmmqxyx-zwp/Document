@@ -1,0 +1,24 @@
+﻿linux 『使用主机名访问』
+------------------------------------------------------------------------------------------------------------
+1、修改/etc/sysconfig/network文件
+	HOSTNAME=zwp-centos
+
+2、/etc/hosts文件执行
+	[root@zwp-centos ~]# cat -n /etc/hosts
+		 1  127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+		 2  ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+		 3
+		 4  127.0.0.1       zwp-centos
+		 
+3、没有域名解析器
+	在windows下配置/windowws/system32/drivers/etc/hosts
+		192.168.0.217	zwp-centos
+	192.168.0.217是zwp-centos的ip
+
+
+
+
+
+
+
+
