@@ -1,0 +1,408 @@
+
+1、下载nexus
+	https://sonatype-download.global.ssl.fastly.net/repository/repositoryManager/3/nexus-3.9.0-01-unix.tar.gz
+
+2、上传到centos、解压
+	
+	命令：tar -zxvf nexus-3.9.0-01-unix.tar.gz
+	
+		[root@zwp-centos nexus-3.9.0-01]# pwd
+		/usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01
+		[root@zwp-centos nexus-3.9.0-01]# ll
+		总用量 52
+		drwxr-xr-x.  3 root root    73 3月  18 20:32 bin
+		drwxr-xr-x.  2 root root    26 3月  18 20:32 deploy
+		drwxr-xr-x.  7 root root   104 3月  18 20:32 etc
+		drwxr-xr-x.  4 root root   184 3月  18 20:32 lib
+		-rw-r--r--.  1 root root 39222 2月  22 06:19 LICENSE.txt
+		-rw-r--r--.  1 root root   395 2月  22 06:19 NOTICE.txt
+		drwxr-xr-x.  3 root root  4096 3月  18 20:32 public
+		drwxr-xr-x. 21 root root  4096 3月  18 20:32 system
+
+	
+3、nexus-3.9.0-01/bin/
+	指定jdk
+	
+	vim nexus
+	
+	由于默认使用openjdk、这块先不修改
+	
+4、修改端口
+	
+	drwxr-xr-x. 2 root root  171 3月  18 20:32 fabric
+	drwxr-xr-x. 2 root root  157 3月  18 20:32 jetty
+	drwxr-xr-x. 2 root root 4096 3月  18 20:32 karaf
+	drwxr-xr-x. 2 root root   51 3月  18 20:32 logback
+	-rw-r--r--. 1 root root  345 3月  18 21:04 nexus-default.properties
+	-rw-r--r--. 1 root root  341 3月  18 21:04 nexus-default.properties.zwp
+	drwxr-xr-x. 2 root root   26 3月  18 20:32 ssl
+
+	vim nexus-default.properties
+	
+	## DO NOT EDIT - CUSTOMIZATIONS BELONG IN $data-dir/etc/nexus.properties
+	##
+	# Jetty section
+	application-port=65530
+	application-host=zwp-centos
+	nexus-args=${jetty.etc}/jetty.xml,${jetty.etc}/jetty-http.xml,${jetty.etc}/jetty-requestlog.xml
+	nexus-context-path=/
+
+	# Nexus section
+	nexus-edition=nexus-pro-edition
+	nexus-features=\
+	 nexus-pro-feature
+
+5、启动
+	无日志启动：./nexus start
+	日志启动：  ./nexus run
+
+	默认用户名、密码：admin、admin123
+	
+	此时本机能访问、外界不能访问
+	
+	需要添加65530端口到防火墙例外端口、
+	firewall-cmd --zone=public --add-port=65530/tcp --permanent
+		[root@zwp-centos etc]# firewall-cmd --zone=public --add-port=65530/tcp --permanent
+		success
+	
+	重新加载使生效
+	firewall-cmd --reload
+		[root@zwp-centos etc]# firewall-cmd --reload
+		success
+	-----------------------------------------------------------------------------------------------------------------
+	没有使用数据库：
+		Nexus 是“开箱即用”的系统，不需要数据库，它使用文件系统加 Lucene 来组织数据，支持 WebDAV 与 LDAP 安全身份认证。
+	Nexus 还提供了强大的仓库管理功能，构件搜索功能，它基于 REST，友好的 UI 是一个 extjs 的 REST 客户端，它占用较少的
+	内存，基于简单文件系统而非数据库。Nexus 极大地简化了本地内部仓库的维护和外部仓库的访问。另外，Nexus 还可以在代理
+	远程仓库的同时维护本地仓库，以降低中央仓库的负荷，节省外网带宽和时间。
+	-----------------------------------------------------------------------------------------------------------------
+	
+	
+6、启动日志
+[root@zwp-centos bin]# ./nexus run
+WARNING: ************************************************************
+WARNING: Detected execution as "root" user.  This is NOT recommended!
+WARNING: ************************************************************
+2018-03-18 21:04:45,697+0800 WARN  [FelixStartLevel] *SYSTEM uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4JInitialiser - Your logging framework class org.ops4j.pax.logging.slf4j.Slf4jLogger is not known - if it needs access to the standard println methods on the console you will need to register it by calling registerLoggingSystemPackage
+2018-03-18 21:04:45,701+0800 INFO  [FelixStartLevel] *SYSTEM uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J - Package org.ops4j.pax.logging.slf4j registered; all classes within it or subpackages of it will be allowed to print to System.out and System.err
+2018-03-18 21:04:45,705+0800 INFO  [FelixStartLevel] *SYSTEM uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J - Replaced standard System.out and System.err PrintStreams with SLF4JPrintStreams
+2018-03-18 21:04:45,706+0800 INFO  [FelixStartLevel] *SYSTEM uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J - Redirected System.out and System.err to SLF4J for this context
+2018-03-18 21:04:45,711+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.ConfigurationBuilder - Properties:
+2018-03-18 21:04:45,712+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.ConfigurationBuilder -   application-host='zwp-centos'
+2018-03-18 21:04:45,712+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.ConfigurationBuilder -   application-port='65530'
+2018-03-18 21:04:45,712+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.ConfigurationBuilder -   fabric.etc='/usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/fabric'
+2018-03-18 21:04:45,712+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.ConfigurationBuilder -   jetty.etc='/usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/jetty'
+2018-03-18 21:04:45,712+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.ConfigurationBuilder -   karaf.base='/usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01'
+2018-03-18 21:04:45,712+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.ConfigurationBuilder -   karaf.data='/usr/local/common-utils/nexus3.9.0/sonatype-work/nexus3'
+2018-03-18 21:04:45,712+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.ConfigurationBuilder -   karaf.etc='/usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/karaf'
+2018-03-18 21:04:45,712+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.ConfigurationBuilder -   karaf.home='/usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01'
+2018-03-18 21:04:45,713+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.ConfigurationBuilder -   karaf.instances='/usr/local/common-utils/nexus3.9.0/sonatype-work/nexus3/instances'
+2018-03-18 21:04:45,713+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.ConfigurationBuilder -   logback.etc='/usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/logback'
+2018-03-18 21:04:45,713+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.ConfigurationBuilder -   nexus-args='/usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/jetty/jetty.xml,/usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/jetty/jetty-http.xml,/usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/jetty/jetty-requestlog.xml'
+2018-03-18 21:04:45,713+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.ConfigurationBuilder -   nexus-context-path='/'
+2018-03-18 21:04:45,713+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.ConfigurationBuilder -   nexus-edition='nexus-pro-edition'
+2018-03-18 21:04:45,713+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.ConfigurationBuilder -   nexus-features='nexus-pro-feature'
+2018-03-18 21:04:45,713+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.ConfigurationBuilder -   ssl.etc='/usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/ssl'
+2018-03-18 21:04:45,714+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.Launcher - Java: 1.8.0_131, OpenJDK 64-Bit Server VM, Oracle Corporation, 25.131-b12
+2018-03-18 21:04:45,714+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.Launcher - OS: Linux, 3.10.0-693.el7.x86_64, amd64
+2018-03-18 21:04:45,714+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.Launcher - User: root, zh, /root
+2018-03-18 21:04:45,714+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.Launcher - CWD: /usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01
+2018-03-18 21:04:45,717+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.Launcher - TMP: /usr/local/common-utils/nexus3.9.0/sonatype-work/nexus3/tmp
+2018-03-18 21:04:45,730+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.jetty.JettyServer - Starting
+2018-03-18 21:04:45,738+0800 INFO  [FelixStartLevel] *SYSTEM org.eclipse.jetty.util.log - Logging initialized @3823ms to org.eclipse.jetty.util.log.Slf4jLog
+2018-03-18 21:04:45,755+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.jetty.JettyServer - Applying configuration: file:/usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/jetty/jetty.xml
+2018-03-18 21:04:45,853+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.jetty.JettyServer - Applying configuration: file:/usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/jetty/jetty-http.xml
+2018-03-18 21:04:45,874+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.bootstrap.jetty.JettyServer - Applying configuration: file:/usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/jetty/jetty-requestlog.xml
+2018-03-18 21:04:45,899+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.bootstrap.jetty.JettyServer - Starting: org.eclipse.jetty.server.Server@160f9928[9.4.8.v20171121]
+2018-03-18 21:04:45,900+0800 INFO  [jetty-main-1] *SYSTEM org.eclipse.jetty.server.Server - jetty-9.4.8.v20171121, build timestamp: 2017-11-22T05:27:37+08:00, git hash: 82b8fb23f757335bb3329d540ce37a2a2615f0a8
+2018-03-18 21:04:45,981+0800 INFO  [jetty-main-1] *SYSTEM org.eclipse.jetty.server.session - DefaultSessionIdManager workerName=node0
+2018-03-18 21:04:45,981+0800 INFO  [jetty-main-1] *SYSTEM org.eclipse.jetty.server.session - No SessionScavenger set, using defaults
+2018-03-18 21:04:45,982+0800 INFO  [jetty-main-1] *SYSTEM org.eclipse.jetty.server.session - Scavenging every 660000ms
+2018-03-18 21:04:45,987+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.bootstrap.osgi.BootstrapListener - Initializing
+2018-03-18 21:04:46,001+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.bootstrap.osgi.BootstrapListener - Loading OSS Edition
+2018-03-18 21:04:46,002+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.bootstrap.osgi.BootstrapListener - Installing: nexus-oss-edition/3.9.0.01
+2018-03-18 21:04:47,030+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.bootstrap.osgi.BootstrapListener - Installed: nexus-oss-edition/3.9.0.01
+2018-03-18 21:04:47,641+0800 INFO  [jetty-main-1] *SYSTEM org.apache.shiro.nexus.NexusWebSessionManager - Global session timeout: 1800000 ms
+2018-03-18 21:04:47,642+0800 INFO  [jetty-main-1] *SYSTEM org.apache.shiro.nexus.NexusWebSessionManager - Session-cookie prototype: name=NXSESSIONID
+2018-03-18 21:04:47,675+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.apache.tika.core [117]
+2018-03-18 21:04:47,778+0800 INFO  [jetty-main-1] *SYSTEM org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 5.1.2.Final
+2018-03-18 21:04:47,926+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.apache.tika.core [117]
+2018-03-18 21:04:47,928+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.common [140]
+2018-03-18 21:04:47,967+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.common [140]
+2018-03-18 21:04:47,968+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.hibernate.validator [124]
+2018-03-18 21:04:47,996+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.hibernate.validator [124]
+2018-03-18 21:04:47,996+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.analytics-api [131]
+2018-03-18 21:04:48,028+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.analytics-api [131]
+2018-03-18 21:04:48,029+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.commands [139]
+2018-03-18 21:04:48,064+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.commands [139]
+2018-03-18 21:04:48,064+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.crypto [141]
+2018-03-18 21:04:48,152+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.crypto [141]
+2018-03-18 21:04:48,152+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.jmx [148]
+2018-03-18 21:04:48,187+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.jmx [148]
+2018-03-18 21:04:48,188+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.cache [137]
+2018-03-18 21:04:48,235+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.cache [137]
+2018-03-18 21:04:48,235+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.security [157]
+2018-03-18 21:04:48,452+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.security [157]
+2018-03-18 21:04:48,453+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.orient [150]
+2018-03-18 21:04:48,578+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.orient [150]
+2018-03-18 21:04:48,579+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.base [133]
+2018-03-18 21:04:48,780+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.internal.metrics.MetricsModule - Metrics support configured
+2018-03-18 21:04:49,767+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.base [133]
+2018-03-18 21:04:49,767+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.blobstore [134]
+2018-03-18 21:04:49,797+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.blobstore [134]
+2018-03-18 21:04:49,798+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.scheduling [156]
+2018-03-18 21:04:49,851+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.scheduling [156]
+2018-03-18 21:04:49,852+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.blobstore-file [136]
+2018-03-18 21:04:49,910+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.blobstore-file [136]
+2018-03-18 21:04:49,910+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.capability [138]
+2018-03-18 21:04:49,952+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.capability [138]
+2018-03-18 21:04:49,952+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.email [142]
+2018-03-18 21:04:49,986+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.email [142]
+2018-03-18 21:04:49,995+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.extdirect [143]
+2018-03-18 21:04:50,057+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.extdirect [143]
+2018-03-18 21:04:50,057+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.httpclient [147]
+2018-03-18 21:04:50,084+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.httpclient [147]
+2018-03-18 21:04:50,084+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.oss-edition [151]
+2018-03-18 21:04:50,132+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.oss-edition [151]
+2018-03-18 21:04:50,132+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.rapture [153]
+2018-03-18 21:04:50,302+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.rapture [153]
+2018-03-18 21:04:50,303+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.rest-jackson2 [155]
+2018-03-18 21:04:50,340+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.rest-jackson2 [155]
+2018-03-18 21:04:50,340+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.siesta [159]
+2018-03-18 21:04:50,433+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.siesta [159]
+2018-03-18 21:04:50,434+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.swagger [162]
+2018-03-18 21:04:50,471+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.swagger [162]
+2018-03-18 21:04:50,472+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.upgrade [165]
+2018-03-18 21:04:50,715+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.upgrade [165]
+2018-03-18 21:04:50,726+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusLifecycleManager - Start KERNEL
+2018-03-18 21:04:50,728+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.internal.log.LogbackLoggerOverrides - File: /usr/local/common-utils/nexus3.9.0/sonatype-work/nexus3/etc/logback/logback-overrides.xml
+2018-03-18 21:04:50,731+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.internal.log.LogbackLogManager - Configuring
+2018-03-18 21:04:50,746+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusContextListener - Installing: [nexus-oss-feature/3.9.0.01]
+2018-03-18 21:04:52,353+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.plugins.nexus-audit-plugin [200]
+2018-03-18 21:04:52,704+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.extender.NexusContextListener - Installed: [nexus-oss-feature/3.9.0.01]
+2018-03-18 21:04:52,890+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.plugins.nexus-audit-plugin [200]
+2018-03-18 21:04:52,895+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.plugins.nexus-ssl-plugin [208]
+2018-03-18 21:04:52,969+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.plugins.nexus-ssl-plugin [208]
+2018-03-18 21:04:52,975+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.quartz [210]
+2018-03-18 21:04:53,056+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.quartz [210]
+2018-03-18 21:04:53,059+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.selector [213]
+2018-03-18 21:04:53,110+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.selector [213]
+2018-03-18 21:04:53,111+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.elasticsearch [199]
+2018-03-18 21:04:53,142+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.elasticsearch [199]
+2018-03-18 21:04:53,143+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.repository [211]
+2018-03-18 21:04:53,633+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.repository [211]
+2018-03-18 21:04:53,633+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.core [198]
+2018-03-18 21:04:53,883+0800 WARN  [FelixStartLevel] *SYSTEM org.sonatype.nexus.internal.system.FileDescriptorServiceImpl - WARNING: ****************************************************************************
+2018-03-18 21:04:53,884+0800 WARN  [FelixStartLevel] *SYSTEM org.sonatype.nexus.internal.system.FileDescriptorServiceImpl - WARNING: The open file descriptor limit is 4096 which is below the minimum recommended value of 65536.
+2018-03-18 21:04:53,884+0800 WARN  [FelixStartLevel] *SYSTEM org.sonatype.nexus.internal.system.FileDescriptorServiceImpl - WARNING: Please see: http://links.sonatype.com/products/nexus/system-reqs#filehandles
+2018-03-18 21:04:53,884+0800 WARN  [FelixStartLevel] *SYSTEM org.sonatype.nexus.internal.system.FileDescriptorServiceImpl - WARNING: ****************************************************************************
+2018-03-18 21:04:53,892+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.core [198]
+2018-03-18 21:04:53,893+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.plugins.nexus-blobstore-tasks [201]
+2018-03-18 21:04:53,928+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.plugins.nexus-blobstore-tasks [201]
+2018-03-18 21:04:53,928+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.plugins.nexus-repository-maven [204]
+2018-03-18 21:04:54,095+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.plugins.nexus-repository-maven [204]
+2018-03-18 21:04:54,096+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.plugins.nexus-restore-maven [206]
+2018-03-18 21:04:54,121+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.plugins.nexus-restore-maven [206]
+2018-03-18 21:04:54,122+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.plugins.nexus-repository-httpbridge [203]
+2018-03-18 21:04:54,178+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.plugins.nexus-repository-httpbridge [203]
+2018-03-18 21:04:54,179+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.plugins.nexus-repository-raw [205]
+2018-03-18 21:04:54,249+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.plugins.nexus-repository-raw [205]
+2018-03-18 21:04:54,250+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.plugins.nexus-script-plugin [207]
+2018-03-18 21:04:54,317+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.plugins.nexus-script-plugin [207]
+2018-03-18 21:04:54,317+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.plugins.nexus-coreui-plugin [202]
+2018-03-18 21:04:54,535+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.plugins.nexus-coreui-plugin [202]
+2018-03-18 21:04:54,536+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.plugins.nexus-task-log-cleanup [209]
+2018-03-18 21:04:54,561+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.plugins.nexus-task-log-cleanup [209]
+2018-03-18 21:04:54,562+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING wrap_file__usr_local_common-utils_nexus3.9.0_nexus-3.9.0-01_system_com_sonatype_licensing_license-bundle_1.4.3_license-bundle-1.4.3.jar [256]
+2018-03-18 21:04:54,672+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED wrap_file__usr_local_common-utils_nexus3.9.0_nexus-3.9.0-01_system_com_sonatype_licensing_license-bundle_1.4.3_license-bundle-1.4.3.jar [256]
+2018-03-18 21:04:54,673+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.licensing-extension [222]
+2018-03-18 21:04:54,732+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.licensing-extension [222]
+2018-03-18 21:04:54,732+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING wrap_file__usr_local_common-utils_nexus3.9.0_nexus-3.9.0-01_system_com_sonatype_insight_scan_insight-scanner-model-io_2.8.1-01_insight-scanner-model-io-2.8.1-01.jar [254]
+2018-03-18 21:04:54,763+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED wrap_file__usr_local_common-utils_nexus3.9.0_nexus-3.9.0-01_system_com_sonatype_insight_scan_insight-scanner-model-io_2.8.1-01_insight-scanner-model-io-2.8.1-01.jar [254]
+2018-03-18 21:04:54,764+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING wrap_file__usr_local_common-utils_nexus3.9.0_nexus-3.9.0-01_system_com_sonatype_insight_scan_insight-scanner-core_2.8.1-01_insight-scanner-core-2.8.1-01.jar [253]
+2018-03-18 21:04:54,794+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED wrap_file__usr_local_common-utils_nexus3.9.0_nexus-3.9.0-01_system_com_sonatype_insight_scan_insight-scanner-core_2.8.1-01_insight-scanner-core-2.8.1-01.jar [253]
+2018-03-18 21:04:54,794+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-healthcheck-base [226]
+2018-03-18 21:04:54,983+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-healthcheck-base [226]
+2018-03-18 21:04:54,983+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-ahc-plugin [223]
+2018-03-18 21:04:55,026+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-ahc-plugin [223]
+2018-03-18 21:04:55,027+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING org.sonatype.nexus.rest-client [251]
+2018-03-18 21:04:55,048+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED org.sonatype.nexus.rest-client [251]
+2018-03-18 21:04:55,048+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-analytics-plugin [224]
+2018-03-18 21:04:55,166+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-analytics-plugin [224]
+2018-03-18 21:04:55,167+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-clm-oss-plugin [225]
+2018-03-18 21:04:55,188+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-clm-oss-plugin [225]
+2018-03-18 21:04:55,188+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-ldap-plugin [227]
+2018-03-18 21:04:55,296+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-ldap-plugin [227]
+2018-03-18 21:04:55,297+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-licensing-plugin [228]
+2018-03-18 21:04:55,366+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-licensing-plugin [228]
+2018-03-18 21:04:55,367+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-repository-npm [236]
+2018-03-18 21:04:55,504+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-repository-npm [236]
+2018-03-18 21:04:55,505+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-repository-nuget [237]
+2018-03-18 21:04:55,623+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-repository-nuget [237]
+2018-03-18 21:04:55,623+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-repository-rubygems [239]
+2018-03-18 21:04:55,697+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-repository-rubygems [239]
+2018-03-18 21:04:55,698+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-migration-plugin [229]
+2018-03-18 21:04:55,928+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-migration-plugin [229]
+2018-03-18 21:04:55,929+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-outreach-plugin [230]
+2018-03-18 21:04:55,983+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-outreach-plugin [230]
+2018-03-18 21:04:55,984+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-proui-plugin [231]
+2018-03-18 21:04:56,016+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-proui-plugin [231]
+2018-03-18 21:04:56,016+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-proximanova-plugin [232]
+2018-03-18 21:04:56,039+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-proximanova-plugin [232]
+2018-03-18 21:04:56,040+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-repository-bower [233]
+2018-03-18 21:04:56,115+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-repository-bower [233]
+2018-03-18 21:04:56,115+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-repository-docker [234]
+2018-03-18 21:04:56,366+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-repository-docker [234]
+2018-03-18 21:04:56,367+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-repository-gitlfs [235]
+2018-03-18 21:04:56,431+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-repository-gitlfs [235]
+2018-03-18 21:04:56,432+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-repository-pypi [238]
+2018-03-18 21:04:56,500+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-repository-pypi [238]
+2018-03-18 21:04:56,501+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-repository-yum [240]
+2018-03-18 21:04:56,607+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-repository-yum [240]
+2018-03-18 21:04:56,608+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-restore-npm [241]
+2018-03-18 21:04:56,629+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-restore-npm [241]
+2018-03-18 21:04:56,630+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-restore-nuget [242]
+2018-03-18 21:04:56,659+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-restore-nuget [242]
+2018-03-18 21:04:56,659+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-restore-yum [243]
+2018-03-18 21:04:56,683+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-restore-yum [243]
+2018-03-18 21:04:56,684+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATING com.sonatype.nexus.plugins.nexus-rutauth-plugin [244]
+2018-03-18 21:04:56,716+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusBundleTracker - ACTIVATED com.sonatype.nexus.plugins.nexus-rutauth-plugin [244]
+2018-03-18 21:04:56,717+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusLifecycleManager - Start STORAGE
+2018-03-18 21:04:56,787+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.internal.node.LocalNodeAccess - ID: AE035E41-029FC414-4982149C-B06EDE0C-79007FAA
+2018-03-18 21:04:56,791+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.internal.orient.DatabaseServerImpl - OrientDB version: 2.2.31 (build 285537d2767275f460df32c6a3be01bfff6a517c, branch 2.2.x)
+2018-03-18 21:04:56,806+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - OrientDB Server v2.2.31 (build 285537d2767275f460df32c6a3be01bfff6a517c, branch 2.2.x) is starting up...
+2018-03-18 21:04:56,811+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - Databases directory: /usr/local/common-utils/nexus3.9.0/sonatype-work/nexus3/db
+2018-03-18 21:04:57,079+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - Configuration of usage of soft references inside of containers of results of SQL execution
+2018-03-18 21:04:57,080+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - Initial and maximum values of heap memory usage are equal, containers of results of SQL executors will use soft references by default
+2018-03-18 21:04:57,080+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - Auto configuration of disk cache size.
+2018-03-18 21:04:57,162+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - 3958075392 B/3774 MB/3 GB of physical memory were detected on machine
+2018-03-18 21:04:57,183+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - Soft memory limit for this process is set to -1 B/-1 MB/-1 GB
+2018-03-18 21:04:57,183+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - Hard memory limit for this process is set to -1 B/-1 MB/-1 GB
+2018-03-18 21:04:57,183+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - Path to 'memory' cgroup is '/'
+2018-03-18 21:04:57,184+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - Mounting path for memory cgroup controller is '/sys/fs/cgroup/memory'
+2018-03-18 21:04:57,185+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - cgroup soft memory limit is 9223372036854771712 B/8796093022207 MB/8589934591 GB
+2018-03-18 21:04:57,185+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - cgroup hard memory limit is 9223372036854771712 B/8796093022207 MB/8589934591 GB
+2018-03-18 21:04:57,185+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - Detected memory limit for current process is 3958075392 B/3774 MB/3 GB
+2018-03-18 21:04:57,188+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - OrientDB auto-config DISKCACHE=568MB (heap=1,158MB direct=2,048MB os=3,774MB)
+2018-03-18 21:04:57,276+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - Found ORIENTDB_ROOT_PASSWORD variable, using this value as root's password
+2018-03-18 21:04:57,452+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - JMX plugin installed and active: profilerManaged=true
+2018-03-18 21:04:57,453+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - OrientDB Studio available at $ANSI{blue http://localhost:2480/studio/index.html}
+2018-03-18 21:04:57,453+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - $ANSI{green:italic OrientDB Server is active} v2.2.31 (build 285537d2767275f460df32c6a3be01bfff6a517c, branch 2.2.x).
+2018-03-18 21:04:57,453+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.internal.orient.DatabaseServerImpl - Activated
+2018-03-18 21:04:57,589+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusLifecycleManager - Start RESTORE
+2018-03-18 21:04:57,873+0800 INFO  [ForkJoinPool.commonPool-worker-1] *SYSTEM ROOT - $ANSI{green {db=analytics}} Previous maximum cache size was 8092 current maximum cache size is 7724. Cache state for storage /usr/local/common-utils/nexus3.9.0/sonatype-work/nexus3/db/analytics will not be restored.
+2018-03-18 21:04:57,874+0800 INFO  [ForkJoinPool.commonPool-worker-1] *SYSTEM ROOT - Storage 'plocal:/usr/local/common-utils/nexus3.9.0/sonatype-work/nexus3/db/analytics' is opened under OrientDB distribution : 2.2.31 (build 285537d2767275f460df32c6a3be01bfff6a517c, branch 2.2.x)
+2018-03-18 21:04:57,958+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - $ANSI{green {db=config}} Previous maximum cache size was 8092 current maximum cache size is 7724. Cache state for storage /usr/local/common-utils/nexus3.9.0/sonatype-work/nexus3/db/config will not be restored.
+2018-03-18 21:04:57,958+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - Storage 'plocal:/usr/local/common-utils/nexus3.9.0/sonatype-work/nexus3/db/config' is opened under OrientDB distribution : 2.2.31 (build 285537d2767275f460df32c6a3be01bfff6a517c, branch 2.2.x)
+2018-03-18 21:04:58,494+0800 INFO  [ForkJoinPool.commonPool-worker-1] *SYSTEM ROOT - $ANSI{green {db=audit}} Previous maximum cache size was 8092 current maximum cache size is 7724. Cache state for storage /usr/local/common-utils/nexus3.9.0/sonatype-work/nexus3/db/audit will not be restored.
+2018-03-18 21:04:58,494+0800 INFO  [ForkJoinPool.commonPool-worker-1] *SYSTEM ROOT - Storage 'plocal:/usr/local/common-utils/nexus3.9.0/sonatype-work/nexus3/db/audit' is opened under OrientDB distribution : 2.2.31 (build 285537d2767275f460df32c6a3be01bfff6a517c, branch 2.2.x)
+2018-03-18 21:04:58,560+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - $ANSI{green {db=security}} Previous maximum cache size was 8092 current maximum cache size is 7724. Cache state for storage /usr/local/common-utils/nexus3.9.0/sonatype-work/nexus3/db/security will not be restored.
+2018-03-18 21:04:58,560+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - Storage 'plocal:/usr/local/common-utils/nexus3.9.0/sonatype-work/nexus3/db/security' is opened under OrientDB distribution : 2.2.31 (build 285537d2767275f460df32c6a3be01bfff6a517c, branch 2.2.x)
+2018-03-18 21:04:58,722+0800 INFO  [ForkJoinPool.commonPool-worker-1] *SYSTEM ROOT - $ANSI{green {db=accesslog}} Previous maximum cache size was 8092 current maximum cache size is 7724. Cache state for storage /usr/local/common-utils/nexus3.9.0/sonatype-work/nexus3/db/accesslog will not be restored.
+2018-03-18 21:04:58,722+0800 INFO  [ForkJoinPool.commonPool-worker-1] *SYSTEM ROOT - Storage 'plocal:/usr/local/common-utils/nexus3.9.0/sonatype-work/nexus3/db/accesslog' is opened under OrientDB distribution : 2.2.31 (build 285537d2767275f460df32c6a3be01bfff6a517c, branch 2.2.x)
+2018-03-18 21:04:58,856+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - $ANSI{green {db=component}} Previous maximum cache size was 8092 current maximum cache size is 7724. Cache state for storage /usr/local/common-utils/nexus3.9.0/sonatype-work/nexus3/db/component will not be restored.
+2018-03-18 21:04:58,857+0800 INFO  [FelixStartLevel] *SYSTEM ROOT - Storage 'plocal:/usr/local/common-utils/nexus3.9.0/sonatype-work/nexus3/db/component' is opened under OrientDB distribution : 2.2.31 (build 285537d2767275f460df32c6a3be01bfff6a517c, branch 2.2.x)
+2018-03-18 21:04:59,002+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusLifecycleManager - Start UPGRADE
+2018-03-18 21:04:59,430+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusLifecycleManager - Start SCHEMAS
+2018-03-18 21:04:59,626+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusLifecycleManager - Start EVENTS
+2018-03-18 21:04:59,731+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.quartz.internal.QuartzSchedulerSPI - Thread-pool size: 20
+2018-03-18 21:04:59,949+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusLifecycleManager - Start SECURITY
+2018-03-18 21:04:59,962+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.security.internal.DefaultSecuritySystem - Unlimited strength JCE policy detected
+2018-03-18 21:04:59,969+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.security.internal.RealmManagerImpl - Using default configuration: RealmConfiguration{realmNames=[NexusAuthenticatingRealm, NexusAuthorizingRealm]}
+2018-03-18 21:04:59,983+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.cache.internal.RuntimeCacheManagerProvider - Cache-provider: ehcache
+2018-03-18 21:04:59,991+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.cache.internal.ehcache.EhCacheManagerProvider - Creating cache-manager with configuration: file:/usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/fabric/ehcache.xml
+2018-03-18 21:04:59,994+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.xml.XmlConfiguration - Loading Ehcache XML configuration from /usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/fabric/ehcache.xml.
+2018-03-18 21:05:00,261+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.jsr107.ConfigurationMerger - Configuration of cache NexusAuthenticatingRealm.authenticationCache will be supplemented by template nexus-default
+2018-03-18 21:05:00,321+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.core.EhcacheManager - Cache 'NexusAuthenticatingRealm.authenticationCache' created in EhcacheManager.
+2018-03-18 21:05:00,326+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.jsr107.Eh107CacheManager - Registering Ehcache MBean javax.cache:type=CacheConfiguration,CacheManager=file./usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/fabric/ehcache.xml,Cache=NexusAuthenticatingRealm.authenticationCache
+2018-03-18 21:05:00,327+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.jsr107.Eh107CacheManager - Registering Ehcache MBean javax.cache:type=CacheStatistics,CacheManager=file./usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/fabric/ehcache.xml,Cache=NexusAuthenticatingRealm.authenticationCache
+2018-03-18 21:05:00,328+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.jsr107.ConfigurationMerger - Configuration of cache NexusAuthorizingRealm.authorizationCache will be supplemented by template nexus-default
+2018-03-18 21:05:00,330+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.core.EhcacheManager - Cache 'NexusAuthorizingRealm.authorizationCache' created in EhcacheManager.
+2018-03-18 21:05:00,331+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.jsr107.Eh107CacheManager - Registering Ehcache MBean javax.cache:type=CacheConfiguration,CacheManager=file./usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/fabric/ehcache.xml,Cache=NexusAuthorizingRealm.authorizationCache
+2018-03-18 21:05:00,331+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.jsr107.Eh107CacheManager - Registering Ehcache MBean javax.cache:type=CacheStatistics,CacheManager=file./usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/fabric/ehcache.xml,Cache=NexusAuthorizingRealm.authorizationCache
+2018-03-18 21:05:00,333+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusLifecycleManager - Start SERVICES
+2018-03-18 21:05:00,375+0800 INFO  [FelixStartLevel] *SYSTEM com.sonatype.nexus.clm.internal.FirewallTransactionQueueRegistry - Setting queue mode to master
+2018-03-18 21:05:00,460+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.blobstore.file.internal.BlobStoreMetricsStoreImpl - Loading blob store metrics file /usr/local/common-utils/nexus3.9.0/sonatype-work/nexus3/blobs/default/AE035E41-029FC414-4982149C-B06EDE0C-79007FAA-metrics.properties
+2018-03-18 21:05:00,580+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.elasticsearch.internal.NodeProvider - Creating node with config: /usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/fabric/elasticsearch.yml
+2018-03-18 21:05:00,727+0800 INFO  [FelixStartLevel] *SYSTEM org.elasticsearch.node - [AE035E41-029FC414-4982149C-B06EDE0C-79007FAA] version[2.4.3], pid[17008], build[d38a34e/2016-12-07T16:28:56Z]
+2018-03-18 21:05:00,728+0800 INFO  [FelixStartLevel] *SYSTEM org.elasticsearch.node - [AE035E41-029FC414-4982149C-B06EDE0C-79007FAA] initializing ...
+2018-03-18 21:05:00,732+0800 INFO  [FelixStartLevel] *SYSTEM org.elasticsearch.plugins - [AE035E41-029FC414-4982149C-B06EDE0C-79007FAA] modules [], plugins [content-auth-plugin], sites []
+2018-03-18 21:05:00,749+0800 INFO  [FelixStartLevel] *SYSTEM org.elasticsearch.env - [AE035E41-029FC414-4982149C-B06EDE0C-79007FAA] using [1] data paths, mounts [[/ (rootfs)]], net usable_space [38.7gb], net total_space [43.7gb], spins? [unknown], types [rootfs]
+2018-03-18 21:05:00,750+0800 INFO  [FelixStartLevel] *SYSTEM org.elasticsearch.env - [AE035E41-029FC414-4982149C-B06EDE0C-79007FAA] heap size [1.1gb], compressed ordinary object pointers [true]
+2018-03-18 21:05:00,750+0800 WARN  [FelixStartLevel] *SYSTEM org.elasticsearch.env - [AE035E41-029FC414-4982149C-B06EDE0C-79007FAA] max file descriptors [4096] for elasticsearch process likely too low, consider increasing to at least [65536]
+2018-03-18 21:05:01,999+0800 INFO  [FelixStartLevel] *SYSTEM org.elasticsearch.node - [AE035E41-029FC414-4982149C-B06EDE0C-79007FAA] initialized
+2018-03-18 21:05:02,000+0800 INFO  [FelixStartLevel] *SYSTEM org.elasticsearch.node - [AE035E41-029FC414-4982149C-B06EDE0C-79007FAA] starting ...
+2018-03-18 21:05:02,004+0800 INFO  [FelixStartLevel] *SYSTEM org.elasticsearch.transport - [AE035E41-029FC414-4982149C-B06EDE0C-79007FAA] publish_address {local[1]}, bound_addresses {local[1]}
+2018-03-18 21:05:02,009+0800 INFO  [FelixStartLevel] *SYSTEM org.elasticsearch.discovery - [AE035E41-029FC414-4982149C-B06EDE0C-79007FAA] nexus/mavkTt-nReKH9vX86kO-zg
+2018-03-18 21:05:02,017+0800 INFO  [elasticsearch[AE035E41-029FC414-4982149C-B06EDE0C-79007FAA][clusterService#updateTask][T#1]] *SYSTEM org.elasticsearch.cluster.service - [AE035E41-029FC414-4982149C-B06EDE0C-79007FAA] new_master {AE035E41-029FC414-4982149C-B06EDE0C-79007FAA}{mavkTt-nReKH9vX86kO-zg}{local}{local[1]}{local=true, master=true}, reason: local-disco-initial_connect(master)
+2018-03-18 21:05:02,023+0800 INFO  [FelixStartLevel] *SYSTEM org.elasticsearch.node - [AE035E41-029FC414-4982149C-B06EDE0C-79007FAA] started
+2018-03-18 21:05:02,132+0800 INFO  [elasticsearch[AE035E41-029FC414-4982149C-B06EDE0C-79007FAA][clusterService#updateTask][T#1]] *SYSTEM org.elasticsearch.gateway - [AE035E41-029FC414-4982149C-B06EDE0C-79007FAA] recovered [5] indices into cluster_state
+2018-03-18 21:05:02,656+0800 INFO  [elasticsearch[AE035E41-029FC414-4982149C-B06EDE0C-79007FAA][clusterService#updateTask][T#1]] *SYSTEM org.elasticsearch.cluster.routing.allocation - [AE035E41-029FC414-4982149C-B06EDE0C-79007FAA] Cluster health status changed from [RED] to [GREEN] (reason: [shards started [[51196dce51055df9247e1973e443b68c84549dd9][0], [51196dce51055df9247e1973e443b68c84549dd9][0]] ...]).
+2018-03-18 21:05:02,804+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.internal.httpclient.HttpClientManagerImpl - Using default configuration: HttpClientConfiguration{connection=null, proxy=null, authentication=null}
+2018-03-18 21:05:02,829+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.repository.httpclient.internal.HttpClientFacetImpl - Remote connection status of repository nuget-group set to Ready to Connect.
+2018-03-18 21:05:02,833+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.jsr107.ConfigurationMerger - Configuration of cache nuget-group#odata-query-cache will be supplemented by template nexus-default
+2018-03-18 21:05:02,836+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.core.EhcacheManager - Cache 'nuget-group#odata-query-cache' created in EhcacheManager.
+2018-03-18 21:05:02,837+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.jsr107.Eh107CacheManager - Registering Ehcache MBean javax.cache:type=CacheConfiguration,CacheManager=file./usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/fabric/ehcache.xml,Cache=nuget-group#odata-query-cache
+2018-03-18 21:05:02,838+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.jsr107.Eh107CacheManager - Registering Ehcache MBean javax.cache:type=CacheStatistics,CacheManager=file./usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/fabric/ehcache.xml,Cache=nuget-group#odata-query-cache
+2018-03-18 21:05:02,949+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.repository.httpclient.internal.HttpClientFacetImpl - Remote connection status of repository nuget.org-proxy set to Ready to Connect.
+2018-03-18 21:05:02,949+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.jsr107.ConfigurationMerger - Configuration of cache nuget.org-proxy#negative-cache will be supplemented by template nexus-default
+2018-03-18 21:05:02,951+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.core.EhcacheManager - Cache 'nuget.org-proxy#negative-cache' created in EhcacheManager.
+2018-03-18 21:05:02,952+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.jsr107.Eh107CacheManager - Registering Ehcache MBean javax.cache:type=CacheConfiguration,CacheManager=file./usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/fabric/ehcache.xml,Cache=nuget.org-proxy#negative-cache
+2018-03-18 21:05:02,952+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.jsr107.Eh107CacheManager - Registering Ehcache MBean javax.cache:type=CacheStatistics,CacheManager=file./usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/fabric/ehcache.xml,Cache=nuget.org-proxy#negative-cache
+2018-03-18 21:05:02,953+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.jsr107.ConfigurationMerger - Configuration of cache nuget.org-proxy#odata-query-cache will be supplemented by template nexus-default
+2018-03-18 21:05:02,958+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.core.EhcacheManager - Cache 'nuget.org-proxy#odata-query-cache' created in EhcacheManager.
+2018-03-18 21:05:02,959+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.jsr107.Eh107CacheManager - Registering Ehcache MBean javax.cache:type=CacheConfiguration,CacheManager=file./usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/fabric/ehcache.xml,Cache=nuget.org-proxy#odata-query-cache
+2018-03-18 21:05:02,959+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.jsr107.Eh107CacheManager - Registering Ehcache MBean javax.cache:type=CacheStatistics,CacheManager=file./usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/fabric/ehcache.xml,Cache=nuget.org-proxy#odata-query-cache
+2018-03-18 21:05:02,989+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.repository.httpclient.internal.HttpClientFacetImpl - Remote connection status of repository maven-central set to Ready to Connect.
+2018-03-18 21:05:02,992+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.jsr107.ConfigurationMerger - Configuration of cache maven-central#negative-cache will be supplemented by template nexus-default
+2018-03-18 21:05:02,996+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.core.EhcacheManager - Cache 'maven-central#negative-cache' created in EhcacheManager.
+2018-03-18 21:05:02,997+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.jsr107.Eh107CacheManager - Registering Ehcache MBean javax.cache:type=CacheConfiguration,CacheManager=file./usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/fabric/ehcache.xml,Cache=maven-central#negative-cache
+2018-03-18 21:05:02,997+0800 INFO  [FelixStartLevel] *SYSTEM org.ehcache.jsr107.Eh107CacheManager - Registering Ehcache MBean javax.cache:type=CacheStatistics,CacheManager=file./usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/etc/fabric/ehcache.xml,Cache=maven-central#negative-cache
+2018-03-18 21:05:03,037+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.quartz.internal.orient.JobStoreImpl - Instance name: nexus; ID: AE035E41-029FC414-4982149C-B06EDE0C-79007FAA
+2018-03-18 21:05:03,038+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.quartz.internal.orient.JobStoreImpl - Initialized
+2018-03-18 21:05:03,045+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.quartz.internal.QuartzSchedulerSPI - Quartz Scheduler v2.2.2
+2018-03-18 21:05:03,161+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.quartz.internal.task.QuartzTaskInfo - Task 'Storage facet cleanup' [repository.storage-facet-cleanup] : state=WAITING
+2018-03-18 21:05:03,168+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.quartz.internal.task.QuartzTaskInfo - Task 'Task log cleanup' [tasklog.cleanup] : state=WAITING
+2018-03-18 21:05:03,171+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusLifecycleManager - Start CAPABILITIES
+2018-03-18 21:05:03,347+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.extender.NexusLifecycleManager - Start TASKS
+2018-03-18 21:05:03,356+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.bootstrap.osgi.BootstrapListener - Initialized
+2018-03-18 21:05:03,383+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.rapture.internal.RaptureWebResourceBundle - UI plugin descriptors:
+2018-03-18 21:05:03,384+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.rapture.internal.RaptureWebResourceBundle -   nexus-rapture
+2018-03-18 21:05:03,385+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.rapture.internal.RaptureWebResourceBundle -   nexus-proximanova-plugin
+2018-03-18 21:05:03,386+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.rapture.internal.RaptureWebResourceBundle -   nexus-coreui-plugin
+2018-03-18 21:05:03,386+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.rapture.internal.RaptureWebResourceBundle -   nexus-proui-plugin
+2018-03-18 21:05:03,392+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.internal.webresources.WebResourceServlet - Max-age: 30 days (2592000 seconds)
+2018-03-18 21:05:03,469+0800 INFO  [jetty-main-1] *SYSTEM com.softwarementors.extjs.djn.servlet.DirectJNgineServlet - Servlet GLOBAL configuration: debug=false, providersUrl=service/extdirect, minify=false, batchRequestsMultithreadingEnabled=true, batchRequestsMinThreadsPoolSize=16, batchRequestsMaxThreadsPoolSize=80, batchRequestsMaxThreadsPerRequest=8, batchRequestsMaxThreadKeepAliveSeconds=60, gsonBuilderConfiguratorClass=org.sonatype.nexus.extdirect.internal.ExtDirectGsonBuilderConfigurator, dispatcherClass=com.softwarementors.extjs.djn.servlet.ssm.SsmDispatcher, jsonRequestProcessorThreadClass=org.sonatype.nexus.extdirect.internal.ExtDirectJsonRequestProcessorThread, contextPath=--not specified: calculated via Javascript--, createSourceFiles=true
+2018-03-18 21:05:03,471+0800 INFO  [jetty-main-1] *SYSTEM com.softwarementors.extjs.djn.servlet.DirectJNgineServlet - Servlet GLOBAL configuration: registryConfiguratorClass=
+2018-03-18 21:05:03,495+0800 INFO  [jetty-main-1] *SYSTEM com.softwarementors.extjs.djn.jscodegen.CodeFileGenerator - Creating source files for APIs...
+2018-03-18 21:05:03,633+0800 INFO  [FelixStartLevel] *SYSTEM org.sonatype.nexus.quartz.internal.QuartzSchedulerSPI - Scheduler put into ready mode
+2018-03-18 21:05:03,757+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.siesta.SiestaServlet - JAX-RS RuntimeDelegate: org.sonatype.nexus.siesta.internal.resteasy.SisuResteasyProviderFactory@158b9b35
+2018-03-18 21:05:03,783+0800 INFO  [jetty-main-1] *SYSTEM org.jboss.resteasy.plugins.validation.i18n - RESTEASY008550: Unable to find CDI supporting ValidatorFactory. Using default ValidatorFactory
+2018-03-18 21:05:04,091+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.siesta.SiestaServlet - Initialized
+2018-03-18 21:05:04,094+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.repository.httpbridge.internal.ViewServlet - Initialized
+2018-03-18 21:05:04,137+0800 INFO  [jetty-main-1] *SYSTEM org.eclipse.jetty.server.handler.ContextHandler - Started o.e.j.w.WebAppContext@7d97fcd8{/,file:///usr/local/common-utils/nexus3.9.0/nexus-3.9.0-01/public/,AVAILABLE}
+2018-03-18 21:05:04,200+0800 INFO  [jetty-main-1] *SYSTEM org.eclipse.jetty.server.AbstractConnector - Started ServerConnector@517889bf{HTTP/1.1,[http/1.1]}{zwp-centos:65530}
+2018-03-18 21:05:04,203+0800 INFO  [jetty-main-1] *SYSTEM org.eclipse.jetty.server.Server - Started @22288ms
+2018-03-18 21:05:04,203+0800 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.bootstrap.jetty.JettyServer -
+-------------------------------------------------
+
+Started Sonatype Nexus OSS 3.9.0-01
+
+-------------------------------------------------
+
+
+
+
+注意：
+2018-03-18 21:05:04,200+0800 INFO  [jetty-main-1] *SYSTEM org.eclipse.jetty.server.AbstractConnector - Started ServerConnector@517889bf{HTTP/1.1,[http/1.1]}{zwp-centos:65530}
+
+
+
+
+
+
+
+
+
+
+
