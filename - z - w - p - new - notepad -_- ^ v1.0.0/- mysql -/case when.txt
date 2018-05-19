@@ -1,0 +1,9 @@
+select
+  case
+    when 字段 = 值 then 查询显示值
+    when 字段 = 值 then 查询显示值
+    when 字段 = 值 then 查询显示值
+    when 字段 = 值 then 查询显示值
+    when 字段 = 值 then 查询显示值
+    else 查询显示默认值 end
+from 表名
